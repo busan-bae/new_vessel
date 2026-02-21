@@ -12,14 +12,14 @@
     <header>
         <div class="inner">
             <div class="head-container">
-                <div class="head-brand"><a href="{{ url_for('home') }}">HOS 선박정보</a></div>
+                <div class="head-brand"><a href="{{ url_for('main.home') }}">HOS 선박정보</a></div>
                 <div class="head-menu">
-                    <div><a href="{{ url_for('vessel_list') }}">선박 리스트</a></div>
-                    <div><a href="{{ url_for('vessel_new') }}">선박 등록</a></div>
+                    <div><a href="{{ url_for('vessel.vessel_list') }}">선박 리스트</a></div>
+                    <div><a href="{{ url_for('vessel.vessel_new') }}">선박 등록</a></div>
                     {% if session.get('user_id')%}
-                        <div><a href="{{ url_for('logout') }}">로그아웃</a></div>
+                        <div><a href="{{ url_for('auth.logout') }}">로그아웃</a></div>
                     {% else %}
-                        <div><a href="{{ url_for('login') }}">로그인</a></div>
+                        <div><a href="{{ url_for('auth.login') }}">로그인</a></div>
                     {% endif %}
                 </div>
             </div>

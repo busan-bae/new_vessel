@@ -46,7 +46,7 @@
                 </dl>
             </div>
             <div class="btn-position">
-                <a href="{{ url_for('vessel_edit', vessel_id=vessel.id) }}" class="btn-primary">수 정</a>
+                <a href="{{ url_for('vessel.vessel_edit', vessel_id=vessel.id) }}" class="btn-primary">수 정</a>
                 <form id="delete-form" action="/vessel/{{ vessel.id }}/delete" method="POST">
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                     <button type="submit" class="btn-danger">삭 제</button>

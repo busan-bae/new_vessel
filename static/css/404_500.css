@@ -1,0 +1,22 @@
+.err-page {
+    text-align: center;
+    padding: 100px 0;
+    color :white;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.err-font {
+    font-size: 7rem;
+}
+
+.err-par {
+    font-size: 1.5rem;
+}
+
+.btn-position {   
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}

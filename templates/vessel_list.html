@@ -22,7 +22,7 @@
                     <tbody>
                         {% for vessel in vessels %}
                         <tr>
-                            <td><a href="{{ url_for('vessel_detail', vessel_id=vessel.id)}}">{{ vessel.name }}</a></td>
+                            <td><a href="{{ url_for('vessel.vessel_detail', vessel_id=vessel.id)}}">{{ vessel.name }}</a></td>
                             <td>{{ vessel.imo_number }}</td>
                             <td>{{ vessel.ship_type }}</td>
                             <td>{{ vessel.gross_tonnage }}</td>
