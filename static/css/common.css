@@ -1,0 +1,199 @@
+/* --------------------------CSS Reset (start)---------------------- */
+
+/*  1. Box sizing 
+    css의 기본값은 content-box 하지만, border-box로 설정하면 
+    padding과 border가 요소의 전체 크기에 포함되므로 레이아웃을 
+    더 쉽게 관리할 수 있음
+*/
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/*  2. 기본 여백 제거 
+    요소별 기본 margin/padding을 제거
+*/
+
+body, h1, h2, h3, h4, p, ul, ol, li {
+  margin: 0;
+  padding: 0;
+}
+
+/*  3. 리스트 스타일 제거 
+    ul/ol의 기본 bullet(●), numbering(1,2,3)을 제거
+*/
+ul, ol {
+  list-style: none;
+}
+
+/*  4. 기본 폰트 설정 
+    OS별 기본 UI 폰트를 우선 사용합니다.
+    macOS/iOS: -apple-system, BlinkMacSystemFont
+    Windows: "Segoe UI"
+    Android/일반: Roboto
+    최후: sans-serif
+*/
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5; /* 줄 간격 확보, 가독성 확보 */
+  -webkit-font-smoothing: antialiased;
+  background-color: #2c3e50; /* 배경색 추가 */
+}
+
+/* 5. 이미지 기본 처리 
+    max-width: 100% : 이미지가 부모 요소의 너비를 초과하지 않도록 설정
+    display: block;으로 설정하여 이미지 아래에 불필요한 여백 제거
+*/
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a { 
+  text-decoration: none; /* 링크의 밑줄 제거 */
+  color: inherit; /* 부모 요소의 색상 상속 */
+}
+/* --------------------------CSS Reset (end)---------------------- */
+
+/* -----------Structure UI (start)------------ */
+.inner {
+    width: 100%;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 2rem;
+    overflow: hidden;
+}
+/* -----------Structure UI (end)------------ */
+
+/* ------------------Header CSS (start)------------------- */
+header { 
+    width: 100%;
+    height: 60px;
+    background-color: #9e9e9e;
+    position : fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.head-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.head-menu {
+    display: flex;
+    gap: 1rem;
+}
+/* ------------------Header CSS (end)------------------- */
+
+/* ------------------------------Button UI (start)------------------------ */
+
+.btn-primary, .btn-danger {
+  /* a태그는 inline임 block 처럼 , padding, width, height 넣기 위해 inline blocker으로 변경 */
+  display: inline-block; 
+  padding: 0.7rem 2rem;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  border: none;         /* 버튼 기본 테두리 제거 */
+  cursor: pointer;      /* 마우스 커서를 손가락으로 */
+  font-family: inherit; /* 부모 폰트 상속 */
+}
+
+.btn-primary { background-color: #3498db; }
+.btn-danger  { background-color: #e74c3c; }
+
+/* ------------------------------Button UI (end)------------------------------ */
+
+main {
+    margin-top : 60px; /* header 높이만큼 여백 추가 */
+}
+
+  /* --- 플래시 메시지 (start) --- */
+
+.flash-message {
+    padding: 0.8rem 1.5rem;
+    width: 100%;
+    max-width: 800px;
+    border-radius: 0 0 6px 6px;
+    font-size: 0.95rem;
+    text-align: center;
+    position: fixed;
+    top: 60px; /* header 바로 아래에 위치 */
+    left: 50%;                    /* 왼쪽에서 50% 위치에서 시작 */
+    transform: translateX(-50%);  /* 자기 너비의 절반만큼 왼쪽으로 당김 */
+    animation: slideDown 1.5s cubic-bezier(0.22, 1, 0.36, 1);  /* 등장 애니메이션 */
+}
+
+.flash-hide {
+    animation: slideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards; /* 퇴장 애니메이션 */
+}
+
+.flash-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.flash-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.flash-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+/* -----flash 애니메이션------ */
+
+/* 등장: 위에서 내려옴 */
+@keyframes slideDown {
+    from {
+        top :40px; 
+    }
+    to {
+        top :60px;
+    }
+}
+
+/* 퇴장: 위로 올라감 */
+@keyframes slideUp {
+    from {
+        top :60px;
+    }
+    to {
+        top :40px; opacity: 0;
+    }
+}
+
+  /* --- 플래시 메시지 (end) --- */
+
+
+
+/* -----------------------------미디어 쿼리---------------------------- */
+
+@media only screen and (min-width:1200px) {
+    .inner {
+        max-width: 1200px;
+    }   
+}
+
+@media (max-width: 768px) {
+    .head-brand {
+        display: none; /* 작은 화면에서는 브랜드 숨김 */
+    }
+    
+    .head-menu {
+        width: 100%;
+        justify-content: space-between;
+        font-size: 0.7rem; /* 작은 화면에서는 메뉴 숨김 */
+    }
+}
+
+

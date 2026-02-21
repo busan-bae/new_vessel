@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vessel_new.css') }}">
+{% endblock %}
+
+
+{% block content %}
+    <div class="sub-container">
+        <div class="inner">
+            <div class="title-container"><h1>선박 등록</h1></div>
+            <div class="form-container">
+                <form action="/vessel/new" method="POST">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    <input type="text" name="name" placeholder="선박명" required>
+                    <input type="text" name="imo_number" placeholder="IMO 번호" required minlength="7" maxlength="7">
+                    <select name="ship_type" required>
+                        <option value="" disabled selected>선종 선택</option>
+                        <option value="CNTR">컨테이너선</option>
+                        <option value="TNKR">유조선</option>
+                        <option value="GAS">가스운반선</option>
+                        <option value="BULK">벌크선</option>
+                        <option value="PCTC">PCTC</option>
+                        <option value="MPV">MPV</option>
+                    </select>
+                    <input type="number" name="gross_tonnage" placeholder="총톤수" required>
+                    <select name="flag" required>
+                        <option value="" disabled selected>기국 선택</option>
+                        <option value="KOR">대한민국</option>
+                        <option value="PAN">파나마</option>
+                        <option value="LIB">라이베리아</option>
+                        <option value="MAR">마샬</option>
+                        <option value="SIN">싱가폴</option>
+                    </select>
+                    <input type="text" name="ship_code" placeholder="선박코드" required>
+                    <input type="text" name="vessel_ro" placeholder="선박 RO" required>
+                    <input type="text" name="vessel_class" placeholder="선급" required>
+                    <input type="text" name="built_year" placeholder="건조년월(2021-04)">
+                    <select name="team" required>
+                        <option value="" disabled selected>관리팀 선택</option>
+                        <option value="C1T">컨테이너선1팀</option>
+                        <option value="C2T">컨테이너선2팀</option>
+                        <option value="C3T">컨테이너선3팀</option>
+                        <option value="C4T">컨테이너선4팀</option>
+                        <option value="TKT">유조선팀</option>
+                        <option value="LBT">LNG & BULK선팀</option>
+                    </select>
+                    <select name="crew" required>
+                        <option value="" disabled selected>해상인사팀 선택</option>
+                        <option value="CM1">해상인사1팀</option>
+                        <option value="CM2">해상인사2팀</option>
+                    </select>
+                    <button type="submit" class="btn-primary">등 록</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

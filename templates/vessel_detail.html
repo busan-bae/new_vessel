@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/vessel_detail.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="vessel-detail-container">
+        <div class="inner">
+            <div class="title-container"><h1>선박 상세 정보</h1></div>
+            <div class="dl-container">
+                <dl>
+                    <dt>선박이름</dt>
+                    <dd>{{ vessel.name }}</dd>
+
+                    <dt>IMO 번호</dt>
+                    <dd>{{ vessel.imo_number }}</dd>
+
+                    <dt>선종</dt>
+                    <dd>{{ vessel.ship_type }}</dd>
+
+                    <dt>총톤수</dt>
+                    <dd>{{ vessel.gross_tonnage }}</dd>
+
+                    <dt>기국</dt>
+                    <dd>{{ vessel.flag }}</dd>
+
+                    <dt>선박코드</dt>
+                    <dd>{{ vessel.detail.ship_code or "-"}}</dd>
+
+                    <dt>RO</dt>
+                    <dd>{{ vessel.detail.vessel_ro or "-" }}</dd>
+
+                    <dt>CLASS</dt>
+                    <dd>{{ vessel.detail.vessel_class or "-" }}</dd>
+
+                    <dt>건조년도</dt>
+                    <dd>{{ vessel.detail.built_year or "-" }}</dd>
+
+                    <dt>관리팀</dt>
+                    <dd>{{ vessel.detail.team or "-" }}</dd>
+
+                    <dt>해상인사팀</dt>
+                    <dd>{{ vessel.detail.crew or "-" }}</dd>
+
+                </dl>
+            </div>
+            <div class="btn-position">
+                <a href="{{ url_for('vessel_edit', vessel_id=vessel.id) }}" class="btn-primary">수 정</a>
+                <form id="delete-form" action="/vessel/{{ vessel.id }}/delete" method="POST">
+                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="btn-danger">삭 제</button>
+                </form>
+            </div>
+        </div>
+    </div> 
+{% endblock %}
