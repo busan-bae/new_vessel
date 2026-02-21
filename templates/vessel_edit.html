@@ -13,7 +13,7 @@
                 <form action="/vessel/{{ vessel.id }}/edit" method="POST">
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                     <input type="text" name="name" value="{{ vessel.name }}" required>
-                    <input type="text" name="imo_number" value="{{ vessel.imo_number }}" required minlength="7" maxlength="7">
+                    <input type="number" name="imo_number" value="{{ vessel.imo_number }}" required min="1000000" max="9999999">
                     <select name="ship_type" required>
                         <option value="" disabled>선종 선택</option>
                         <option value="CNTR" {% if vessel.ship_type == "CNTR" %}selected{% endif %}>컨테이너선</option>
@@ -23,7 +23,7 @@
                         <option value="PCTC" {% if vessel.ship_type == "PCTC" %}selected{% endif %}>PCTC</option>
                         <option value="MPV" {% if vessel.ship_type == "MPV" %}selected{% endif %}>MPV</option>
                     </select>
-                    <input type="number" name="gross_tonnage" value="{{ vessel.gross_tonnage }}" required>
+                    <input type="text" name="ship_size" value="{{ vessel.ship_size }}" required>
                     <select name="flag" required>
                         <option value="" disabled >기국 선택</option>
                         <option value="KOR" {% if vessel.flag == "KOR" %}selected{% endif %}>대한민국</option>

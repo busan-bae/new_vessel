@@ -8,6 +8,31 @@
     <div class="vessel-list-container">
         <div class="inner">
             <div class="title-container"><h1>선박 목록</h1></div>
+            <div class="search-box">
+                <form method="GET" action="{{ url_for('vessel.vessel_list') }}">
+                    <div class="search-box-inner">
+                        <input type="text" name="name" placeholder="선박명" value="{{ name }}">
+                        <select name="ship_type">
+                            <option value="" {% if ship_type == '' %}selected{% endif %}>선종 선택</option>
+                            <option value="CNTR" {% if ship_type == 'CNTR' %}selected{% endif %}>컨테이너선</option>
+                            <option value="TNKR" {% if ship_type == 'TNKR' %}selected{% endif %}>유조선</option>
+                            <option value="GAS" {% if ship_type == 'GAS' %}selected{% endif %}>가스운반선</option>
+                            <option value="BULK" {% if ship_type == 'BULK' %}selected{% endif %}>벌크선</option>
+                            <option value="PCTC" {% if ship_type == 'PCTC' %}selected{% endif %}>PCTC</option>
+                            <option value="MPV" {% if ship_type == 'MPV' %}selected{% endif %}>MPV</option>
+                        </select>
+                        <select name="flag">
+                            <option value="" {% if flag == '' %}selected{% endif %}>기국 선택</option>
+                            <option value="KOR" {% if flag == 'KOR' %}selected{% endif %}>대한민국</option>
+                            <option value="PAN" {% if flag == 'PAN' %}selected{% endif %}>파나마</option>
+                            <option value="LIB" {% if flag == 'LIB' %}selected{% endif %}>라이베리아</option>
+                            <option value="MAR" {% if flag == 'MAR' %}selected{% endif %}>마샬</option>
+                            <option value="SIN" {% if flag == 'SIN' %}selected{% endif %}>싱가폴</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">검색</button>
+                </form>
+            </div>
             <div class="table-container">
                 <table>
                     <thead>
@@ -15,7 +40,7 @@
                             <th>선박명</th>
                             <th>IMO 번호</th>
                             <th>선종</th>
-                            <th>총톤수</th>
+                            <th>SIZE</th>
                             <th>기국</th>
                         </tr>
                     </thead>
@@ -25,7 +50,7 @@
                             <td><a href="{{ url_for('vessel.vessel_detail', vessel_id=vessel.id)}}">{{ vessel.name }}</a></td>
                             <td>{{ vessel.imo_number }}</td>
                             <td>{{ vessel.ship_type }}</td>
-                            <td>{{ vessel.gross_tonnage }}</td>
+                            <td>{{ vessel.ship_size }}</td>
                             <td>{{ vessel.flag }}</td>
                         </tr>
                         {% endfor %}

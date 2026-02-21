@@ -13,7 +13,7 @@
                 <form action="/vessel/new" method="POST">
                     <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
                     <input type="text" name="name" placeholder="선박명" required>
-                    <input type="text" name="imo_number" placeholder="IMO 번호" required minlength="7" maxlength="7">
+                    <input type="number" name="imo_number" placeholder="IMO 번호" required min="1000000" max="9999999">
                     <select name="ship_type" required>
                         <option value="" disabled selected>선종 선택</option>
                         <option value="CNTR">컨테이너선</option>
@@ -23,7 +23,7 @@
                         <option value="PCTC">PCTC</option>
                         <option value="MPV">MPV</option>
                     </select>
-                    <input type="number" name="gross_tonnage" placeholder="총톤수" required>
+                    <input type="text" name="ship_size" placeholder="선박사이즈(24k,VLCC)" required>
                     <select name="flag" required>
                         <option value="" disabled selected>기국 선택</option>
                         <option value="KOR">대한민국</option>

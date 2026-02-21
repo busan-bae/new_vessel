@@ -58,11 +58,12 @@ new_vessel/
 ## 추후 리팩토링 목표
 - 템플릿 폴더 구조 분리 (파일이 많아지면 templates/auth/, templates/vessel/, templates/errors/ 로 분리)
 - 환경변수로 설정 관리 (.env + python-dotenv)
+- CSR(React 등)로 전환 시 검색은 JS 필터링 + API 방식으로 변경
 
 ## 진행 현황
 
 ### 로드맵
-1. ~~CRUD 완성~~ ✅ → 2. ~~리팩토링~~ ✅ → 3. 검색/조회 기능 → 4. 권한 관리
+1. ~~CRUD 완성~~ ✅ → 2. ~~리팩토링~~ ✅ → 3. ~~검색/조회 기능~~ (진행중) → 4. 권한 관리
 
 ### 1단계 — CRUD 완성 ✅
 - [x] Flask 기본 세팅 & DB 연동 (SQLite + SQLAlchemy)
@@ -80,8 +81,11 @@ new_vessel/
 - [x] login_required 데코레이터 (routes/decorators.py)
 - [x] 커스텀 에러 페이지 (404, 500)
 
-### 3단계 — 검색/조회 기능
-- [ ] 선박 검색 (선박명, 선종, 기국 등 필터링)
+### 3단계 — 검색/조회 기능 (진행중)
+- [x] seed.py — JSON 파일로 더미데이터 삽입 (119척)
+- [x] 모델 수정 — gross_tonnage(Integer) → ship_size(String)
+- [x] 선박 검색 (선박명 부분검색, 선종/기국 필터링)
+- [x] 검색 후 폼 값 유지 (라우트에서 템플릿으로 값 전달)
 - [ ] 페이지네이션
 
 ### 4단계 — 권한 관리 (RBAC)
@@ -117,6 +121,11 @@ new_vessel/
 - `db.ForeignKey` + `db.relationship(uselist=False)` — 1:1 관계 설정
 - `generate_password_hash` / `check_password_hash` — 비밀번호 해시
 - `session['key']` — 서버 메모장, `session.clear()`로 로그아웃
-- CSRF — 위조 요청 공격, flask-seasurf로 보호
+- CSRF — 위조 요청 공격, flask-seasurf로 보호 (GET 방식은 CSRF 불필요)
 - `Vessel.query.filter_by(...).first()` — 중복 체크 패턴
 - `Vessel.query.get_or_404(id)` — 단건 조회, 없으면 자동 404
+- `Vessel.query.filter(Vessel.name.like(f"%{keyword}%"))` — 부분 검색 (LIKE)
+- `query.filter(...).filter(...)` — 필터 중첩 (AND 조건)
+- `request.args.get("key", "")` — GET 쿼리 파라미터 읽기, 없으면 기본값 반환
+- seed.py — `create_app()` + `app_context()`로 스크립트에서 DB 접근하는 패턴
+- SSR 검색은 SQL 필터링, CSR 전환 시 JS 필터링으로 변경 예정

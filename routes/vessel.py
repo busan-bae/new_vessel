@@ -14,7 +14,7 @@ def vessel_new():
         name = request.form.get("name")
         imo_number = request.form.get("imo_number")
         ship_type = request.form.get("ship_type")
-        gross_tonnage = request.form.get("gross_tonnage")
+        ship_size = request.form.get("ship_size")
         flag = request.form.get("flag")
         
 
@@ -36,7 +36,7 @@ def vessel_new():
             name=name, 
             imo_number=imo_number, 
             ship_type=ship_type, 
-            gross_tonnage=gross_tonnage, 
+            ship_size=ship_size, 
             flag=flag
             )
             
@@ -62,9 +62,26 @@ def vessel_new():
 @vessel_bp.route("/vessel/list", methods=["GET"])
 @login_required # 로그인 여부 확인 -> 비 로그인시 로그인 페이지 이동
 def vessel_list():
+    # 1. URL 쿼리 파라미터에서 검색조건 읽기
+    name = request.args.get("name","")
+    ship_type = request.args.get("ship_type","")
+    flag = request.args.get("flag","")
+
+    # 2. 기본 쿼리 시작
+    query = Vessel.query
     
-    vessels = Vessel.query.all()  # DB에서 모든 선박 정보 조회
-    return render_template("vessel_list.html", vessels=vessels)  # vessel_list.html 템플릿 렌더링
+    # 3. 조건이 있으면 필터 추가
+    if name:
+        query = query.filter(Vessel.name.like(f"%{name}%"))
+    if ship_type:
+        query = query.filter_by(ship_type=ship_type)
+    if flag:
+        query = query.filter_by(flag=flag)
+        
+    vessels = query.all()
+    
+    # 4. 최종 실행
+    return render_template("vessel_list.html", vessels=vessels, name=name, ship_type=ship_type,flag=flag)  # vessel_list.html 템플릿 렌더링
 
 
 @vessel_bp.route("/vessel/<int:vessel_id>", methods=["GET"])
@@ -85,7 +102,7 @@ def vessel_edit(vessel_id):
         name = request.form.get("name")
         imo_number = request.form.get("imo_number")
         ship_type = request.form.get("ship_type")
-        gross_tonnage = request.form.get("gross_tonnage")
+        ship_size = request.form.get("ship_size")
         flag = request.form.get("flag")
         
         ship_code = request.form.get("ship_code")
@@ -98,7 +115,7 @@ def vessel_edit(vessel_id):
         vessel.name = name
         vessel.imo_number = imo_number
         vessel.ship_type = ship_type
-        vessel.gross_tonnage = gross_tonnage
+        vessel.ship_size = ship_size
         vessel.flag = flag
         vessel.detail.ship_code = ship_code
         vessel.detail.vessel_ro = vessel_ro

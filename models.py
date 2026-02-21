@@ -11,9 +11,9 @@ class User(db.Model):
 class Vessel(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # 고유 ID (자동 증가)
     name = db.Column(db.String(100), nullable=False)
-    imo_number = db.Column(db.String(20), unique=True, nullable=False)
+    imo_number = db.Column(db.Integer, unique=True, nullable=False)
     ship_type = db.Column(db.String(50), nullable=False)
-    gross_tonnage = db.Column(db.Integer, nullable=False)
+    ship_size = db.Column(db.String(20), nullable=False)
     flag = db.Column(db.String(50),nullable=False)
     detail = db.relationship('VesselDetail', backref='vessel', uselist=False)  # VesselDetail과 1:1 관계 설정
 
