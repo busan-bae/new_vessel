@@ -7,6 +7,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # 고유 ID (자동 증가)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
+    role = db.Column(db.String(20),nullable=False, default="viewer")
 
 class Vessel(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # 고유 ID (자동 증가)

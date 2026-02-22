@@ -63,7 +63,7 @@ new_vessel/
 ## 진행 현황
 
 ### 로드맵
-1. ~~CRUD 완성~~ ✅ → 2. ~~리팩토링~~ ✅ → 3. ~~검색/조회 기능~~ (진행중) → 4. 권한 관리
+1. ~~CRUD 완성~~ ✅ → 2. ~~리팩토링~~ ✅ → 3. ~~검색/조회 기능~~ ✅ → 4. ~~권한 관리~~ ✅
 
 ### 1단계 — CRUD 완성 ✅
 - [x] Flask 기본 세팅 & DB 연동 (SQLite + SQLAlchemy)
@@ -81,16 +81,19 @@ new_vessel/
 - [x] login_required 데코레이터 (routes/decorators.py)
 - [x] 커스텀 에러 페이지 (404, 500)
 
-### 3단계 — 검색/조회 기능 (진행중)
+### 3단계 — 검색/조회 기능 ✅
 - [x] seed.py — JSON 파일로 더미데이터 삽입 (119척)
 - [x] 모델 수정 — gross_tonnage(Integer) → ship_size(String)
 - [x] 선박 검색 (선박명 부분검색, 선종/기국 필터링)
 - [x] 검색 후 폼 값 유지 (라우트에서 템플릿으로 값 전달)
-- [ ] 페이지네이션
+- [x] 페이지네이션 (20척/페이지, 검색 조건 유지, 모바일 반응형)
 
-### 4단계 — 권한 관리 (RBAC)
-- [ ] User 모델에 role 필드 추가 (admin / manager / viewer)
-- [ ] 역할별 접근 제어 (등록/수정/삭제는 admin, 조회는 viewer도 가능)
+### 4단계 — 권한 관리 (RBAC) ✅
+- [x] User 모델에 role 필드 추가 (admin / viewer)
+- [x] admin_required 데코레이터 (routes/decorators.py)
+- [x] 등록/수정/삭제 라우트에 @admin_required 적용
+- [x] context_processor로 current_user 전체 템플릿 주입 (app.py)
+- [x] 헤더/메인 페이지에서 admin만 선박 등록·회원가입 버튼 노출
 
 ## 학습 메모
 
@@ -129,3 +132,16 @@ new_vessel/
 - `request.args.get("key", "")` — GET 쿼리 파라미터 읽기, 없으면 기본값 반환
 - seed.py — `create_app()` + `app_context()`로 스크립트에서 DB 접근하는 패턴
 - SSR 검색은 SQL 필터링, CSR 전환 시 JS 필터링으로 변경 예정
+- `query.paginate(page=page, per_page=20, error_out=False)` — 페이지 단위 데이터 조회
+- `pagination.items` — 현재 페이지 데이터 목록
+- `pagination.iter_pages()` — 페이지 번호 목록 생성, 생략 구간은 None 반환
+- `<input type="hidden" name="page" value="1">` — 검색 시 항상 1페이지로 초기화
+- `url_for()`에 검색 파라미터 함께 전달 — 페이지 이동 시 검색 조건 유지
+
+### 권한 관리 (RBAC)
+- `role = db.Column(db.String(20), nullable=False, default="viewer")` — 모델에 역할 컬럼 추가
+- `@admin_required` — 데코레이터로 라우트 단위 권한 제어
+- `request.referrer or url_for(...)` — 권한 없을 때 이전 페이지로 리디렉션, 없으면 폴백
+- `@app.context_processor` — 모든 템플릿에 변수를 자동 주입하는 기능
+- `current_user` — context_processor로 주입된 현재 유저 객체 (비로그인 시 None)
+- `{% if current_user and current_user.role == "admin" %}` — 템플릿에서 역할별 UI 분기

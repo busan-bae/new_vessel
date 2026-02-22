@@ -1,6 +1,6 @@
 from flask import Blueprint,session,redirect,url_for,request,flash, render_template
 from models import db, Vessel, VesselDetail
-from routes.decorators import login_required
+from routes.decorators import login_required, admin_required
 
 
 vessel_bp = Blueprint("vessel",__name__)
@@ -8,6 +8,7 @@ vessel_bp = Blueprint("vessel",__name__)
 
 @vessel_bp.route("/vessel/new", methods=["GET", "POST"])
 @login_required # 로그인 여부 확인 -> 비 로그인시 로그인 페이지 이동
+@admin_required  
 def vessel_new():
     
     if request.method == "POST":
@@ -77,11 +78,19 @@ def vessel_list():
         query = query.filter_by(ship_type=ship_type)
     if flag:
         query = query.filter_by(flag=flag)
+    
+    
         
-    vessels = query.all()
+    # vessels = query.all()
+    # 위 코드가 아래처럼 페이지 네이션 됨
+    
+    page = request.args.get("page",1,type=int) # url에서 페이지 번호 읽기
+    pagination = query.paginate(page=page, per_page=20 , error_out=False)
+    vessels = pagination.items
+    
     
     # 4. 최종 실행
-    return render_template("vessel_list.html", vessels=vessels, name=name, ship_type=ship_type,flag=flag)  # vessel_list.html 템플릿 렌더링
+    return render_template("vessel_list.html", vessels=vessels, name=name, ship_type=ship_type,flag=flag,pagination=pagination)  # vessel_list.html 템플릿 렌더링
 
 
 @vessel_bp.route("/vessel/<int:vessel_id>", methods=["GET"])
@@ -94,6 +103,7 @@ def vessel_detail(vessel_id):
 
 @vessel_bp.route("/vessel/<int:vessel_id>/edit", methods=["GET", "POST"])
 @login_required # 로그인 여부 확인 -> 비 로그인시 로그인 페이지 이동
+@admin_required
 def vessel_edit(vessel_id):
     
     vessel = Vessel.query.get_or_404(vessel_id)# DB에서 해당 ID의 선박 정보 조회, 없으면 404 에러)   
@@ -133,6 +143,7 @@ def vessel_edit(vessel_id):
 
 @vessel_bp.route("/vessel/<int:vessel_id>/delete", methods=["POST"])
 @login_required # 로그인 여부 확인 -> 비 로그인시 로그인 페이지 이동
+@admin_required
 def vessel_delete(vessel_id):
       
     vessel = Vessel.query.get_or_404(vessel_id)# DB에서 해당 ID의 선박 정보 조회, 없으면 404 에러)   

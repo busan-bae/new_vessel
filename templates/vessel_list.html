@@ -11,6 +11,7 @@
             <div class="search-box">
                 <form method="GET" action="{{ url_for('vessel.vessel_list') }}">
                     <div class="search-box-inner">
+                        <input type="hidden" name="page" value="1"> 
                         <input type="text" name="name" placeholder="선박명" value="{{ name }}">
                         <select name="ship_type">
                             <option value="" {% if ship_type == '' %}selected{% endif %}>선종 선택</option>
@@ -55,8 +56,26 @@
                         </tr>
                         {% endfor %}
                     </tbody>
-                </table>  
-            </div>
+                </table>
+                <div class="pagination">
+                {% if pagination.has_prev %}
+                    <a href="{{ url_for('vessel.vessel_list', page=pagination.prev_num, name=name, ship_type = ship_type, flag=flag) }}">이전</a>
+                {% endif %}
+
+                {% for p in pagination.iter_pages() %}
+                    {% if p %}
+                        <a href="{{ url_for('vessel.vessel_list', page = p, name=name, ship_type = ship_type, flag=flag) }}" 
+                        {% if p == pagination.page %} class="active" {% endif %}>{{ p }}</a>
+                    {% else %}
+                        <span>...</span>
+                    {% endif %}
+                {% endfor %}
+
+                {% if pagination.has_next %}
+                    <a href="{{ url_for('vessel.vessel_list', page=pagination.next_num, name=name, ship_type=ship_type, flag=flag) }}">다음</a>
+                {% endif %}
+            </div>  
+        </div>
         </div>
     </div> 
 {% endblock %}

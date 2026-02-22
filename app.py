@@ -1,6 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template,session
 from flask_seasurf import SeaSurf
-from models import db
+from models import db, User
 from routes.main import main_bp
 from routes.auth import auth_bp
 from routes.vessel import vessel_bp
@@ -32,5 +32,10 @@ def create_app():
     @app.errorhandler(500)
     def server_error(e):
         return render_template("500.html"), 500
+    
+    @app.context_processor
+    def inject_user():
+        user = User.query.get(session.get('user_id'))  # 현재 로그인 유저 조회
+        return dict(current_user=user)  
     
     return app
