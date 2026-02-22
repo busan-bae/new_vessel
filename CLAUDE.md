@@ -63,7 +63,7 @@ new_vessel/
 ## 진행 현황
 
 ### 로드맵
-1. ~~CRUD 완성~~ ✅ → 2. ~~리팩토링~~ ✅ → 3. ~~검색/조회 기능~~ ✅ → 4. ~~권한 관리~~ ✅
+1. ~~CRUD 완성~~ ✅ → 2. ~~리팩토링~~ ✅ → 3. ~~검색/조회 기능~~ ✅ → 4. ~~권한 관리~~ ✅ → 5. 운항정보 API 수신 (예정)
 
 ### 1단계 — CRUD 완성 ✅
 - [x] Flask 기본 세팅 & DB 연동 (SQLite + SQLAlchemy)
@@ -89,6 +89,53 @@ new_vessel/
 - [x] 페이지네이션 (20척/페이지, 검색 조건 유지, 모바일 반응형)
 
 ### 4단계 — 권한 관리 (RBAC) ✅
+- [x] User 모델에 role 필드 추가 (admin / viewer)
+- [x] admin_required 데코레이터 (routes/decorators.py)
+- [x] 등록/수정/삭제 라우트에 @admin_required 적용
+- [x] context_processor로 current_user 전체 템플릿 주입 (app.py)
+- [x] 헤더/메인 페이지에서 admin만 선박 등록·회원가입 버튼 노출
+
+### 5단계 — 운항정보 API 수신 (예정)
+
+#### 개요
+- n8n이 HTTP POST로 컨테이너선 운항정보 JSON 배열을 전송
+- Flask API가 수신 → DB 저장 (덮어쓰기) → 운항정보 페이지 표시
+
+#### 데이터 형식 (n8n → Flask)
+```json
+[
+  {
+    "vessel_name": "HMM ALGECIRAS",
+    "voy_no": "0019",
+    "line": "FE4",
+    "teu": "24K",
+    "flag": "KOR",
+    "captain": "이상필 (2026-02-05)",
+    "chief_engineer": "문학병 (2025-10-30)",
+    "safety_supervisor": "장성욱",
+    "ops_supervisor": "강문수",
+    "psc_inspection": { "mou_1": "Tokyo", "date_1": "2025-09-09", "mou_2": "Paris", "date_2": "2025-11-25" },
+    "last_port": { "port": "SGSIN(PSA)", "etd": "2026-02-19 04:30" },
+    "next_port": { "port": "GBFXT(GBR)", "eta": "2026-03-21 04:00", "etb": "2026-03-22 04:00", "etd": "2026-03-23 15:00" },
+    "itinerary": "NLRTM / RWG(03/24) → DEHAM / CTB(03/30) → ..."
+  }
+]
+```
+
+#### 구현 순서
+- [ ] `models.py` — VoyageInfo 모델 추가 (vessel_id FK, 중첩 객체 컬럼으로 펼치기, updated_at)
+- [ ] `routes/api.py` — POST /api/voyage 엔드포인트 (새 파일)
+- [ ] API 인증 — 1단계: API Key 방식 → 2단계: HMAC 서명 검증으로 업그레이드 예정
+- [ ] `app.py` — api Blueprint 등록
+- [ ] `routes/vessel.py` — 운항정보 페이지 라우트 추가
+- [ ] `templates/voyage.html` — 운항정보 페이지
+
+#### 선박 연결 방식
+- `vessel_name`으로 기존 Vessel 테이블과 매칭 (이름 형식 동일)
+- 매칭 실패 시 `vessel_id = None`으로 저장 (연결 없이 데이터는 보존)
+
+#### 저장 방식
+- 덮어쓰기 (upsert) — vessel_name 기준으로 기존 row 업데이트, 없으면 새로 생성
 - [x] User 모델에 role 필드 추가 (admin / viewer)
 - [x] admin_required 데코레이터 (routes/decorators.py)
 - [x] 등록/수정/삭제 라우트에 @admin_required 적용

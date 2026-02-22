@@ -1,1 +1,11 @@
 __pycache__/
+*.pyc
+
+# 가상환경
+venv/
+
+# SQLite DB (서버에서 볼륨으로 관리)
+instance/
+
+# 환경변수 (나중에 쓸 것)
+.env
