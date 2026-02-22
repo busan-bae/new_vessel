@@ -53,36 +53,32 @@ git push              →       git pull
 
 ## 학습 단계
 
-### 1단계 — Dockerfile 작성 ⬅ 현재
-- [ ] `requirements.txt` 에 gunicorn 추가
-- [ ] `Dockerfile` 작성
-- [ ] `.dockerignore` 작성
+### 1단계 — Dockerfile 작성 ✅
+- [x] `requirements.txt` 에 gunicorn 추가
+- [x] `Dockerfile` 작성
+- [x] `.dockerignore` 작성
 
-### 2단계 — docker-compose.yml 작성
-- [ ] Flask + Nginx 서비스 구성
-- [ ] 볼륨 마운트 (SQLite DB 파일 유지)
-- [ ] 포트 설정
+### 2단계 — docker-compose.yml 작성 ✅
+- [x] Flask 서비스 구성
+- [x] 볼륨 마운트 (SQLite DB 파일 유지)
+- [x] 포트 설정 (5000번)
+- [x] 미니PC 배포 및 브라우저 접속 확인
 
-### 3단계 — Nginx 설정 (HTTP)
-- [ ] `nginx.conf` 작성
-- [ ] Flask → Nginx 프록시 연결 확인
-
-### 4단계 — HTTPS 적용
-- [ ] DDNS 도메인 연결
-- [ ] Let's Encrypt 인증서 발급 (Certbot)
-- [ ] Nginx HTTPS 설정
+### 3단계 — HTTPS 적용 ✅
+- [x] DDNS 도메인 연결 (hos.hangbae.dedyn.io)
+- [x] Caddy API로 Flask 프록시 라우트 추가 (기존 설정 파일 수정 없이)
+- [x] HTTPS 접속 확인
 
 ---
 
-## 파일 구조 (완성 목표)
+## 파일 구조 (현재)
 
 ```
 new_vessel/
-├── Dockerfile
-├── docker-compose.yml
-├── .dockerignore
-├── nginx/
-│   └── nginx.conf
+├── Dockerfile        ✅
+├── docker-compose.yml ✅
+├── .dockerignore     ✅
+├── DEPLOY.md         ✅
 └── (기존 Flask 파일들...)
 ```
 
@@ -91,10 +87,23 @@ new_vessel/
 ## 학습 메모
 
 ### Docker
-- `FROM python:3.11-slim` — 슬림 버전: 불필요한 OS 패키지 제거, 이미지 크기 최소화
+- `FROM python:3.13-slim` — 슬림 버전: 불필요한 OS 패키지 제거, 이미지 크기 최소화
 - `WORKDIR /app` — 컨테이너 안 작업 디렉토리 (없으면 자동 생성)
 - `COPY requirements.txt .` → `RUN pip install` — 레이어 캐시 최적화 (코드 변경 시 패키지 재설치 방지)
 - `CMD ["gunicorn", ...]` — 컨테이너 시작 시 실행할 명령어
+- `volumes: - ./data:/app/instance` — 미니PC 폴더와 컨테이너 폴더를 연결 (DB 영구 보존)
+- Docker가 생성한 폴더는 root 소유 → `sudo chown -R user:user ./data/` 로 권한 변경 필요
+
+### DB 마이그레이션
+- `instance/`는 `.gitignore`에 포함 → git으로 전송 불가
+- FileZilla(SFTP) 또는 scp로 직접 전송 (미니PC SSH 포트: 2222)
+- 전송 후 `docker compose restart` 로 컨테이너 재시작 필요
+
+### Caddy API
+- Caddy 관리자 API: `localhost:2019` (로컬에서만 접근 가능)
+- 파일 수정 없이 라우트 추가: `curl -X POST localhost:2019/config/apps/http/servers/srv0/routes/0`
+- 라우트 삭제: `curl -X DELETE localhost:2019/config/apps/http/servers/srv0/routes/[인덱스]`
+- 현재 라우트 확인: `curl -s localhost:2019/config/apps/http/servers/srv0/routes/ | python3 -m json.tool | grep -A2 '"host"'`
 
 ### Gunicorn
 - Flask 내장 서버는 개발용 (단일 스레드, 느림)
@@ -113,4 +122,10 @@ new_vessel/
 
 - [x] venv 생성 및 requirements.txt 작성 (13개 패키지)
 - [x] 배포 아키텍처 설계 완료
-- [ ] Dockerfile 작성 중
+- [x] Dockerfile 작성
+- [x] .dockerignore 작성
+- [x] docker-compose.yml 작성
+- [x] 미니PC 배포 완료 (http://192.168.0.13:5000)
+- [x] DDNS 연결 및 HTTPS 적용 (https://hos.hangbae.dedyn.io)
+- [x] 기존 개발 DB 데이터 마이그레이션 (vessel.db → 미니PC data/ 폴더)
+- [ ] deSEC 토큰으로 IP 자동 업데이트 설정 (IP 고정이라 나중에 필요 시)
