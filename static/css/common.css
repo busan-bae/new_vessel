@@ -185,11 +185,9 @@ main {
 }
 
 @media (max-width: 768px) {
-    .head-brand {
-        display: none; /* 작은 화면에서는 브랜드 숨김 */
-    }
+
     
-    .head-menu {
+    .head-menu, .head-brand {
         width: 100%;
         justify-content: space-between;
         font-size: 0.7rem; /* 작은 화면에서는 메뉴 숨김 */
