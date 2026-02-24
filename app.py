@@ -4,6 +4,7 @@ from models import db, User
 from routes.main import main_bp
 from routes.auth import auth_bp
 from routes.vessel import vessel_bp
+from routes.api import api_bp
 
 def create_app():
     app = Flask(__name__)
@@ -14,13 +15,16 @@ def create_app():
     # 시크릿 키 설정 (세션 관리)
     # 실제로는 안전한 키로 변경해야 함  ----> 추후 환경변수로 관리 예정 
     app.config['SECRET_KEY'] = "my_secret_key_top"  
+    app.config['API_KEY'] = 'hos-secret-key-1234'
     
     db.init_app(app)
-    SeaSurf(app)
+    csrf = SeaSurf(app)
+    csrf.exempt_urls(('/api/',))
     
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(vessel_bp) 
+    app.register_blueprint(api_bp)
     
     with app.app_context():
         db.create_all()

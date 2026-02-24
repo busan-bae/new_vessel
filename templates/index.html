@@ -19,7 +19,8 @@
                 {% if current_user and current_user.role == "admin" %}
                     <a href="{{ url_for('vessel.vessel_new')}}"><div class="card">선박 등록</div></a>
                 {% endif %}
-                <a href="{{ url_for('vessel.vessel_list') }}"><div class="card">선박 조회</div></a>
+                <a href="{{ url_for('vessel.vessel_list') }}"><div class="card">선박 정보</div></a>
+                <a href="{{ url_for('vessel.voyage_list') }}"><div class="card">운항 정보</div></a>
                 {% if current_user and current_user.role == "admin" %}
                 <a href="{{ url_for('auth.signup')}}"><div class="card">회원 가입</div></a>
                 {% endif %}

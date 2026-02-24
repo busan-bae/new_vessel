@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/voyage_list.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="vessel-list-container">
+        <div class="inner">
+            <div class="title-container"><h1>운항정보</h1></div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>선박명</th>
+                            <th>운항라인</th>
+                            <th>선장</th>
+                            <th>기관장</th>
+                            <th>담당감독</th>
+                            <th>운항감독</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for voyage in voyages %}
+                        <tr>
+                            <td>{{ voyage.vessel_name}}</td>
+                            <td>{{ voyage.line }}</td>
+                            <td>{{ voyage.captain }}</td>
+                            <td>{{ voyage.chief_engineer }}</td>
+                            <td>{{ voyage.safety_supervisor }}</td>
+                            <td>{{ voyage.ops_supervisor }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> 
+{% endblock %}

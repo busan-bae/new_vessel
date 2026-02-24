@@ -1,5 +1,5 @@
 from flask import Blueprint,session,redirect,url_for,request,flash, render_template
-from models import db, Vessel, VesselDetail
+from models import db, Vessel, VesselDetail,VoyageInfo
 from routes.decorators import login_required, admin_required
 
 
@@ -157,3 +157,10 @@ def vessel_delete(vessel_id):
     db.session.commit()
     flash("선박 정보가 삭제되었습니다.","success")
     return redirect(url_for("vessel.vessel_list"))
+
+
+@vessel_bp.route("/voyage" , methods=["GET"])
+@login_required # 로그인 여부 확인 -> 비 로그인시 로그인 페이지 이동
+def voyage_list():
+    voyages = VoyageInfo.query.order_by(VoyageInfo.vessel_name).all()
+    return render_template("voyage_list.html",voyages=voyages)
