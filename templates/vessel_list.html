@@ -74,8 +74,8 @@
                 {% if pagination.has_next %}
                     <a href="{{ url_for('vessel.vessel_list', page=pagination.next_num, name=name, ship_type=ship_type, flag=flag) }}">다음</a>
                 {% endif %}
-            </div>  
-        </div>
+                </div>  
+            </div>
         </div>
     </div> 
 {% endblock %}

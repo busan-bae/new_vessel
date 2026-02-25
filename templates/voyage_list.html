@@ -8,6 +8,18 @@
     <div class="vessel-list-container">
         <div class="inner">
             <div class="title-container"><h1>운항정보</h1></div>
+            <div class="search-box">
+                <form method="GET" action="{{ url_for('vessel.voyage_list') }}">
+                    <div class="search-box-inner">
+                        <input type="hidden" name="page" value="1"> 
+                        <input type="text" name="vessel_name" placeholder="선박명" value="{{ vessel_name }}">
+                        <input type="text" name="line" placeholder="항로" value="{{ line }}">
+                        <input type="text" name="s_crew" placeholder="선기장" value="{{ s_crew }}">
+                        <input type="text" name="supervisor" placeholder="감독" value="{{ supervisor }}">                      
+                    </div>
+                    <button type="submit" class="btn-primary">검색</button>
+                </form>
+            </div>
             <div class="table-container">
                 <table>
                     <thead>
@@ -23,7 +35,7 @@
                     <tbody>
                         {% for voyage in voyages %}
                         <tr>
-                            <td>{{ voyage.vessel_name}}</td>
+                            <td><a href="{{ url_for('vessel.voyage_detail', voyage_id=voyage.id)}}">{{ voyage.vessel_name}}</a></td>
                             <td>{{ voyage.line }}</td>
                             <td>{{ voyage.captain }}</td>
                             <td>{{ voyage.chief_engineer }}</td>
@@ -33,6 +45,27 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <div class="pagination">
+                {% if pagination.has_prev %}
+                    <a href="{{ url_for('vessel.voyage_list', page=pagination.prev_num, vessel_name=vessel_name, s_crew=s_crew,
+                           line=line, supervisor=supervisor,) }}">이전</a>
+                {% endif %}
+
+                {% for p in pagination.iter_pages() %}
+                    {% if p %}
+                        <a href="{{ url_for('vessel.voyage_list', page = p, vessel_name=vessel_name, s_crew=s_crew,
+                           line=line, supervisor=supervisor,) }}" 
+                        {% if p == pagination.page %} class="active" {% endif %}>{{ p }}</a>
+                    {% else %}
+                        <span>...</span>
+                    {% endif %}
+                {% endfor %}
+
+                {% if pagination.has_next %}
+                    <a href="{{ url_for('vessel.voyage_list', page=pagination.next_num, vessel_name=vessel_name, s_crew=s_crew,
+                           line=line, supervisor=supervisor,) }}">다음</a>
+                {% endif %}
+                </div> 
             </div>
         </div>
     </div> 

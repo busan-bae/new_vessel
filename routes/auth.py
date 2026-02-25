@@ -10,6 +10,12 @@ def signup():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
+        
+        # username 중복 체크
+        if User.query.filter_by(username=username).first():
+            flash("이미 사용 중인 아이디입니다.", "error")
+            return render_template("signup.html")
+        
         hashed_password = generate_password_hash(password)  # 비밀번호 해싱
         new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)

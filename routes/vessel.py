@@ -162,5 +162,44 @@ def vessel_delete(vessel_id):
 @vessel_bp.route("/voyage" , methods=["GET"])
 @login_required # 로그인 여부 확인 -> 비 로그인시 로그인 페이지 이동
 def voyage_list():
-    voyages = VoyageInfo.query.order_by(VoyageInfo.vessel_name).all()
-    return render_template("voyage_list.html",voyages=voyages)
+    vessel_name = request.args.get("vessel_name", "")
+    line = request.args.get("line", "")
+    s_crew = request.args.get("s_crew", "")
+    supervisor = request.args.get("supervisor", "")
+    
+    query = VoyageInfo.query
+    
+    if vessel_name:
+        query = query.filter(VoyageInfo.vessel_name.like(f"%{vessel_name}%"))
+    if line:
+        query = query.filter(VoyageInfo.line.like(f"%{line}%"))
+    if supervisor:
+          # 담당감독 또는 운항감독 중 하나라도 일치하면 검색
+        query = query.filter(
+            (VoyageInfo.safety_supervisor.like(f"%{supervisor}%")) |
+            (VoyageInfo.ops_supervisor.like(f"%{supervisor}%"))
+          )
+    if s_crew:
+        query =query.filter(
+            (VoyageInfo.captain.like(f"%{s_crew}%")) |
+            (VoyageInfo.chief_engineer.like(f"%{s_crew}%"))
+        )
+               
+    # voyages = query.order_by(VoyageInfo.vessel_name).all() 
+    page = request.args.get("page",1,type=int)
+    pagination = query.order_by(VoyageInfo.vessel_name).paginate(page=page, per_page=20, error_out=False)   
+    voyages = pagination.items
+    
+    return render_template("voyage_list.html",voyages=voyages,
+                           vessel_name=vessel_name, s_crew=s_crew,
+                           line=line, supervisor=supervisor, pagination=pagination)
+
+
+
+@vessel_bp.route("/voyage/<int:voyage_id>" , methods=["GET"])
+@login_required # 로그인 여부 확인 -> 비 로그인시 로그인 페이지 이동
+def voyage_detail(voyage_id):
+    # VoyageInfo 테이블에서 해당 ID 조회, 없으면 404
+    voyage = VoyageInfo.query.get_or_404(voyage_id)
+    return render_template("voyage_detail.html",voyage=voyage)
+

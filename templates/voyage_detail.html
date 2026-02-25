@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block css %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/voyage_detail.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div class="vessel-detail-container">
+        <div class="inner">
+            <div class="title-container"><h1>선박 상세 정보</h1></div>
+            <div class="dl-container">
+                <dl>
+                    <dt>선박이름</dt>
+                    <dd>{{ voyage.vessel_name }}</dd>
+
+                    <dt>항차정보</dt>
+                    <dd>{{ voyage.voy_no }}</dd>
+
+                    <dt>항로</dt>
+                    <dd>{{ voyage.line }}</dd>
+
+                    <dt>선장</dt>
+                    <dd>{{ voyage.captain }}</dd>
+
+                    <dt>기관장</dt>
+                    <dd>{{ voyage.chief_engineer }}</dd>
+
+                    <dt>감독</dt>
+                    <dd>{{ voyage.safety_supervisor }}</dd>
+
+                    <dt>운항감독</dt>
+                    <dd>{{ voyage.ops_supervisor }}</dd>
+
+                    <dt> 출항항</dt>
+                    <dd>{{ voyage.last_port }}</dd>
+
+                    <dt> 출항일</dt>
+                    <dd>{{ voyage.last_etd }}</dd>
+
+                    <dt> 입항항 </dt>
+                    <dd>{{ voyage.next_port }}</dd>
+
+                    <dt> 입항일 (ETB)</dt>
+                    <dd>{{ voyage.next_etb }}</dd>
+
+                    <dt> 항로 </dt>
+                    <dd>{{ voyage.itinerary }}</dd>
+
+                    <dt> 최종 업데이트 시간 </dt>
+                    <dd>{{ voyage.updated_at }}</dd>
+
+                </dl>
+            </div>
+            <div class="btn-position">
+                  <a href="{{ url_for('vessel.voyage_list') }}" class="btn-primary">목록으로</a>
+            </div>
+        </div>
+    </div> 
+{% endblock %}
