@@ -17,16 +17,12 @@ def vessel_new():
         ship_type = request.form.get("ship_type")
         ship_size = request.form.get("ship_size")
         flag = request.form.get("flag")
-        
-
         ship_code = request.form.get("ship_code")
         vessel_ro = request.form.get("vessel_ro")
         vessel_class = request.form.get("vessel_class")
         built_year = request.form.get("built_year")
         team = request.form.get("team")
         crew = request.form.get("crew")
-        
-    
         
         if Vessel.query.filter_by(imo_number=imo_number).first():
             flash("이미 등록된 IMO 번호입니다.", "error")
@@ -57,7 +53,7 @@ def vessel_new():
             flash("선박 등록이 완료되었습니다.", "success")
             return redirect(url_for("vessel.vessel_list"))  # 선박 등록 후 선박 목록 페이지로 리디렉션
     
-    return render_template("vessel_new.html")
+    return render_template("vessel/vessel_new.html")
     
 
 @vessel_bp.route("/vessel/list", methods=["GET"])
@@ -78,28 +74,26 @@ def vessel_list():
         query = query.filter_by(ship_type=ship_type)
     if flag:
         query = query.filter_by(flag=flag)
-    
-    
-        
+       
     # vessels = query.all()
     # 위 코드가 아래처럼 페이지 네이션 됨
     
     page = request.args.get("page",1,type=int) # url에서 페이지 번호 읽기
     pagination = query.paginate(page=page, per_page=20 , error_out=False)
     vessels = pagination.items
-    
-    
+     
     # 4. 최종 실행
-    return render_template("vessel_list.html", vessels=vessels, name=name, ship_type=ship_type,flag=flag,pagination=pagination)  # vessel_list.html 템플릿 렌더링
+    return render_template("vessel/vessel_list.html", vessels=vessels, name=name, ship_type=ship_type,flag=flag,pagination=pagination)  # vessel_list.html 템플릿 렌더링
+
 
 
 @vessel_bp.route("/vessel/<int:vessel_id>", methods=["GET"])
 @login_required # 로그인 여부 확인 -> 비 로그인시 로그인 페이지 이동
 def vessel_detail(vessel_id):
-
-    
     vessel = Vessel.query.get_or_404(vessel_id)# DB에서 해당 ID의 선박 정보 조회, 없으면 404 에러)   
-    return render_template("vessel_detail.html", vessel=vessel)  # vessel_list.html 템플릿 렌더링
+    return render_template("vessel/vessel_detail.html", vessel=vessel)  # vessel_list.html 템플릿 렌더링
+
+
 
 @vessel_bp.route("/vessel/<int:vessel_id>/edit", methods=["GET", "POST"])
 @login_required # 로그인 여부 확인 -> 비 로그인시 로그인 페이지 이동
@@ -114,7 +108,6 @@ def vessel_edit(vessel_id):
         ship_type = request.form.get("ship_type")
         ship_size = request.form.get("ship_size")
         flag = request.form.get("flag")
-        
         ship_code = request.form.get("ship_code")
         vessel_ro = request.form.get("vessel_ro")
         vessel_class = request.form.get("vessel_class")
@@ -139,7 +132,9 @@ def vessel_edit(vessel_id):
         flash("선박 정보가 수정되었습니다.","success")
         return redirect(url_for("vessel.vessel_detail", vessel_id=vessel.id))  # 수정 후 선박 상세 페이지로 리디렉션
     
-    return render_template("vessel_edit.html", vessel=vessel)  # vessel_edit.html 템플릿 렌더링
+    return render_template("vessel/vessel_edit.html", vessel=vessel)  # vessel_edit.html 템플릿 렌더링
+
+
 
 @vessel_bp.route("/vessel/<int:vessel_id>/delete", methods=["POST"])
 @login_required # 로그인 여부 확인 -> 비 로그인시 로그인 페이지 이동
@@ -150,13 +145,15 @@ def vessel_delete(vessel_id):
     
     try:
         db.session.delete(vessel.detail)
-    except:
+    except Exception:
         pass
         
     db.session.delete(vessel)
     db.session.commit()
     flash("선박 정보가 삭제되었습니다.","success")
     return redirect(url_for("vessel.vessel_list"))
+
+
 
 
 @vessel_bp.route("/voyage" , methods=["GET"])
@@ -185,12 +182,11 @@ def voyage_list():
             (VoyageInfo.chief_engineer.like(f"%{s_crew}%"))
         )
                
-    # voyages = query.order_by(VoyageInfo.vessel_name).all() 
     page = request.args.get("page",1,type=int)
     pagination = query.order_by(VoyageInfo.vessel_name).paginate(page=page, per_page=20, error_out=False)   
     voyages = pagination.items
     
-    return render_template("voyage_list.html",voyages=voyages,
+    return render_template("vessel/voyage_list.html",voyages=voyages,
                            vessel_name=vessel_name, s_crew=s_crew,
                            line=line, supervisor=supervisor, pagination=pagination)
 
@@ -201,5 +197,5 @@ def voyage_list():
 def voyage_detail(voyage_id):
     # VoyageInfo 테이블에서 해당 ID 조회, 없으면 404
     voyage = VoyageInfo.query.get_or_404(voyage_id)
-    return render_template("voyage_detail.html",voyage=voyage)
+    return render_template("vessel/voyage_detail.html",voyage=voyage)
 

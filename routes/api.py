@@ -59,4 +59,4 @@ def receive_voyage():
     
     except Exception as e:
         db.session.rollback()  # 에러 발생 시 DB 변경사항 되돌리기
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': 'Internal server error'}), 500

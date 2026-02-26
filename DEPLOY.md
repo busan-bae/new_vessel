@@ -107,9 +107,14 @@ new_vessel/
 
 ### Gunicorn
 - Flask 내장 서버는 개발용 (단일 스레드, 느림)
-- Gunicorn은 프로덕션용 WSGI 서버 (멀티 워커, 안정적)
+- Gunicorn은 프로덕션용 WSGI 서버 (멀w티 워커, 안정적)
 - `--bind 0.0.0.0:5000` — 모든 외부 요청을 5000번 포트로 수신
 - `app:create_app()` — app.py의 create_app() 팩토리 함수 호출
+
+### n8n → Flask API 연동
+- n8n과 Flask가 다른 docker-compose 프로젝트면 기본적으로 다른 네트워크 → 컨테이너 이름으로 직접 통신 불가
+- 같은 네트워크로 묶으려면 shared external network 필요 (복잡)
+- 간단한 대안: 외부 도메인 URL 사용 (`https://hos.hangbae.dedyn.io/api/voyage`) — 같은 서버 내에서 돌아오지만 트래픽이 적으면 충분
 
 ### 가상환경 (venv)
 - conda는 데이터사이언스용, venv는 웹개발/배포에 적합
@@ -120,7 +125,7 @@ new_vessel/
 
 ## 현재 진행 현황
 
-- [x] venv 생성 및 requirements.txt 작성 (13개 패키지)
+- [x] venv 생성 및 requirements.txt 작성
 - [x] 배포 아키텍처 설계 완료
 - [x] Dockerfile 작성
 - [x] .dockerignore 작성
@@ -128,4 +133,7 @@ new_vessel/
 - [x] 미니PC 배포 완료 (http://192.168.0.13:5000)
 - [x] DDNS 연결 및 HTTPS 적용 (https://hos.hangbae.dedyn.io)
 - [x] 기존 개발 DB 데이터 마이그레이션 (vessel.db → 미니PC data/ 폴더)
+- [x] python-dotenv 추가 및 requirements.txt 갱신 (venv 기반으로 정리)
+- [x] .env 파일 FileZilla로 미니PC 전송
+- [x] n8n → Flask API 연동 (https://hos.hangbae.dedyn.io/api/voyage)
 - [ ] deSEC 토큰으로 IP 자동 업데이트 설정 (IP 고정이라 나중에 필요 시)

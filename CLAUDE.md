@@ -49,21 +49,24 @@ new_vessel/
 └── templates/
     ├── base.html
     ├── index.html
-    ├── signup.html
-    ├── login.html
-    ├── vessel_new.html
-    ├── vessel_list.html
-    ├── vessel_detail.html
-    ├── vessel_edit.html
-    ├── voyage_list.html      # 운항정보 목록 (검색 + 페이지네이션)
-    ├── voyage_detail.html    # 운항정보 상세
-    ├── 404.html
-    └── 500.html
+    ├── auth/
+    │   ├── signup.html
+    │   └── login.html
+    ├── vessel/
+    │   ├── vessel_new.html
+    │   ├── vessel_list.html
+    │   ├── vessel_detail.html
+    │   ├── vessel_edit.html
+    │   ├── voyage_list.html      # 운항정보 목록 (검색 + 페이지네이션)
+    │   └── voyage_detail.html    # 운항정보 상세
+    └── errors/
+        ├── 404.html
+        └── 500.html
 ```
 
 ## TODO
-- [ ] `routes/decorators.py` — admin_required와 context_processor에서 동일 DB 쿼리 중복 실행
-- [ ] 템플릿 폴더 구조 분리 (templates/auth/, templates/vessel/, templates/errors/)
+
+현재 처리할 항목 없음. 사용하면서 개선점 발견 시 추가.
 
 ## 진행 현황
 
@@ -76,7 +79,8 @@ new_vessel/
 6. ~~운항정보 상세 페이지~~ ✅
 7. ~~운항정보 검색~~ ✅
 8. ~~운항정보 페이지네이션~~ ✅
-9. 다음 단계
+9. ~~코드 품질 개선 & 구조 리팩토링~~ ✅
+10. 실사용 후 개선
 
 ## 학습 메모
 
@@ -125,3 +129,12 @@ new_vessel/
 - `csrf.exempt_urls(('/api/',))` — CSRF 검증 예외 경로 등록
 - truncate and insert 패턴 — `Model.query.delete()` 후 전체 새로 삽입
 - `os.environ.get('KEY')` + `load_dotenv()` — 환경변수로 민감한 설정 관리
+
+### 코드 품질 & 보안
+- `except:` (bare except) — `KeyboardInterrupt`, `SystemExit`까지 잡아버림 → 반드시 `except Exception:`으로 좁힐 것
+- 에러 메시지 외부 노출 — `str(e)` 그대로 반환하면 DB 구조 등 내부 정보 유출 → `'Internal server error'`로 고정
+- `load_dotenv()` 위치 — 모듈 레벨보다 `create_app()` 안 첫 줄이 더 안전 (테스트 시 타이밍 문제 방지)
+- `render_template("folder/file.html")` — 템플릿 하위 폴더 구조 사용 가능, 경로 문자열로 구분
+- `url_for`는 **함수 이름**을 받음, 파일 경로 아님 — 템플릿 폴더 분리 시 `url_for`는 건드리지 않음
+- `g` 객체 — 요청 1번 동안만 살아있는 임시 저장소, `before_request`와 함께 요청 초반에 데이터 세팅하는 패턴
+- 최적화 판단 — 기본키 조회(`User.query.get(id)`) 중복은 소규모에서 성능 영향 없음, 복잡도 증가가 더 큰 손해일 수 있음
