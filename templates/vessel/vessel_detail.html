@@ -1,57 +1,82 @@
 {% extends "base.html" %}
 
-{% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/vessel_detail.css') }}">
+{% block title %}{{ vessel.name }} - HOS 선박관리{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vessel_detail.css') }}" />
 {% endblock %}
 
 {% block content %}
-    <div class="vessel-detail-container">
-        <div class="inner">
-            <div class="title-container"><h1>선박 상세 정보</h1></div>
-            <div class="dl-container">
-                <dl>
-                    <dt>선박이름</dt>
-                    <dd>{{ vessel.name }}</dd>
+<div class="container">
 
-                    <dt>IMO 번호</dt>
-                    <dd>{{ vessel.imo_number }}</dd>
+  <!-- 페이지 헤더 -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ vessel.name }}</h1>
+      <p class="page-subtitle">IMO {{ vessel.imo_number }}</p>
+    </div>
+    <div class="page-actions">
+      <a href="{{ url_for('vessel.vessel_list') }}" class="btn btn-outline">← 목록으로</a>
+      {% if current_user and current_user.role == 'admin' %}
+        <a href="{{ url_for('vessel.vessel_edit', vessel_id=vessel.id) }}" class="btn btn-primary">정보 수정</a>
+        <!-- 삭제: POST 방식 (GET 삭제는 보안상 부적절) -->
+        <form class="delete-form" method="POST"
+              action="{{ url_for('vessel.vessel_delete', vessel_id=vessel.id) }}"
+              onsubmit="return confirm('정말 삭제하시겠습니까?')">
+          <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}" />
+          <button type="submit" class="btn btn-outline-danger">삭제</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
 
-                    <dt>선종</dt>
-                    <dd>{{ vessel.ship_type }}</dd>
+  <!-- 기본 정보 | 상세 정보 (2열 카드 레이아웃) -->
+  <div class="detail-two-col">
 
-                    <dt>선박사이즈</dt>
-                    <dd>{{ vessel.ship_size }}</dd>
+    <!-- 기본 정보 -->
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">기본 정보</span>
+        <span class="badge badge-blue">{{ vessel.ship_type }}</span>
+      </div>
+      <div class="detail-grid">
+        <span class="detail-label">선박명</span>
+        <span class="detail-value">{{ vessel.name }}</span>
+        <span class="detail-label">IMO 번호</span>
+        <span class="detail-value">{{ vessel.imo_number }}</span>
+        <span class="detail-label">선종</span>
+        <span class="detail-value">{{ vessel.ship_type }}</span>
+        <span class="detail-label">선박 크기</span>
+        <span class="detail-value">{{ vessel.ship_size }}</span>
+        <span class="detail-label">국적</span>
+        <span class="detail-value">{{ vessel.flag }}</span>
+      </div>
+    </div>
 
-                    <dt>기국</dt>
-                    <dd>{{ vessel.flag }}</dd>
+    <!-- 상세 정보 -->
+    {% if vessel.detail %}
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">상세 정보</span>
+      </div>
+      <div class="detail-grid">
+        <span class="detail-label">선박 코드</span>
+        <span class="detail-value">{{ vessel.detail.ship_code }}</span>
+        <span class="detail-label">선박 구분</span>
+        <span class="detail-value">{{ vessel.detail.vessel_ro }}</span>
+        <span class="detail-label">선급</span>
+        <span class="detail-value">{{ vessel.detail.vessel_class }}</span>
+        <span class="detail-label">건조 연도</span>
+        <span class="detail-value">{{ vessel.detail.built_year or '-' }}</span>
+        <span class="detail-label">담당팀</span>
+        <span class="detail-value">{{ vessel.detail.team }}</span>
+        <span class="detail-label">선원 정보</span>
+        <span class="detail-value">{{ vessel.detail.crew }}</span>
+      </div>
+    </div>
+    {% endif %}
 
-                    <dt>선박코드</dt>
-                    <dd>{{ vessel.detail.ship_code or "-"}}</dd>
+  </div>
 
-                    <dt>RO</dt>
-                    <dd>{{ vessel.detail.vessel_ro or "-" }}</dd>
-
-                    <dt>CLASS</dt>
-                    <dd>{{ vessel.detail.vessel_class or "-" }}</dd>
-
-                    <dt>건조년도</dt>
-                    <dd>{{ vessel.detail.built_year or "-" }}</dd>
-
-                    <dt>관리팀</dt>
-                    <dd>{{ vessel.detail.team or "-" }}</dd>
-
-                    <dt>해상인사팀</dt>
-                    <dd>{{ vessel.detail.crew or "-" }}</dd>
-
-                </dl>
-            </div>
-            <div class="btn-position">
-                <a href="{{ url_for('vessel.vessel_edit', vessel_id=vessel.id) }}" class="btn-primary">수 정</a>
-                <form id="delete-form" action="/vessel/{{ vessel.id }}/delete" method="POST">
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="btn-danger">삭 제</button>
-                </form>
-            </div>
-        </div>
-    </div> 
+</div>
 {% endblock %}

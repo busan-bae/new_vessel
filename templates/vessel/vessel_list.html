@@ -1,81 +1,132 @@
 {% extends "base.html" %}
 
-{% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/vessel_list.css') }}">
+{% block title %}선박 목록 - HOS 선박관리{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vessel_list.css') }}" />
 {% endblock %}
 
 {% block content %}
-    <div class="vessel-list-container">
-        <div class="inner">
-            <div class="title-container"><h1>선박 목록</h1></div>
-            <div class="search-box">
-                <form method="GET" action="{{ url_for('vessel.vessel_list') }}">
-                    <div class="search-box-inner">
-                        <input type="hidden" name="page" value="1"> 
-                        <input type="text" name="name" placeholder="선박명" value="{{ name }}">
-                        <select name="ship_type">
-                            <option value="" {% if ship_type == '' %}selected{% endif %}>선종 선택</option>
-                            <option value="CNTR" {% if ship_type == 'CNTR' %}selected{% endif %}>컨테이너선</option>
-                            <option value="TNKR" {% if ship_type == 'TNKR' %}selected{% endif %}>유조선</option>
-                            <option value="GAS" {% if ship_type == 'GAS' %}selected{% endif %}>가스운반선</option>
-                            <option value="BULK" {% if ship_type == 'BULK' %}selected{% endif %}>벌크선</option>
-                            <option value="PCTC" {% if ship_type == 'PCTC' %}selected{% endif %}>PCTC</option>
-                            <option value="MPV" {% if ship_type == 'MPV' %}selected{% endif %}>MPV</option>
-                        </select>
-                        <select name="flag">
-                            <option value="" {% if flag == '' %}selected{% endif %}>기국 선택</option>
-                            <option value="KOR" {% if flag == 'KOR' %}selected{% endif %}>대한민국</option>
-                            <option value="PAN" {% if flag == 'PAN' %}selected{% endif %}>파나마</option>
-                            <option value="LIB" {% if flag == 'LIB' %}selected{% endif %}>라이베리아</option>
-                            <option value="MAR" {% if flag == 'MAR' %}selected{% endif %}>마샬</option>
-                            <option value="SIN" {% if flag == 'SIN' %}selected{% endif %}>싱가폴</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn-primary">검색</button>
-                </form>
-            </div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>선박명</th>
-                            <th>IMO 번호</th>
-                            <th>선종</th>
-                            <th>SIZE</th>
-                            <th>기국</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for vessel in vessels %}
-                        <tr>
-                            <td><a href="{{ url_for('vessel.vessel_detail', vessel_id=vessel.id)}}">{{ vessel.name }}</a></td>
-                            <td>{{ vessel.imo_number }}</td>
-                            <td>{{ vessel.ship_type }}</td>
-                            <td>{{ vessel.ship_size }}</td>
-                            <td>{{ vessel.flag }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <div class="pagination">
-                {% if pagination.has_prev %}
-                    <a href="{{ url_for('vessel.vessel_list', page=pagination.prev_num, name=name, ship_type = ship_type, flag=flag) }}">이전</a>
-                {% endif %}
+<div class="container">
 
-                {% for p in pagination.iter_pages() %}
-                    {% if p %}
-                        <a href="{{ url_for('vessel.vessel_list', page = p, name=name, ship_type = ship_type, flag=flag) }}" 
-                        {% if p == pagination.page %} class="active" {% endif %}>{{ p }}</a>
-                    {% else %}
-                        <span>...</span>
-                    {% endif %}
-                {% endfor %}
+  <!-- 페이지 헤더 -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">선박 목록</h1>
+      <p class="page-subtitle">총 {{ pagination.total }}척 등록됨</p>
+    </div>
+    {% if current_user and current_user.role == 'admin' %}
+      <div class="page-actions">
+        <a href="{{ url_for('vessel.vessel_new') }}" class="btn btn-primary">+ 선박 등록</a>
+      </div>
+    {% endif %}
+  </div>
 
-                {% if pagination.has_next %}
-                    <a href="{{ url_for('vessel.vessel_list', page=pagination.next_num, name=name, ship_type=ship_type, flag=flag) }}">다음</a>
-                {% endif %}
-                </div>  
-            </div>
-        </div>
-    </div> 
+  <!-- 검색 바 (GET 방식) -->
+  <form method="GET" action="{{ url_for('vessel.vessel_list') }}">
+    <div class="search-bar">
+      <div class="form-group">
+        <label class="form-label" for="name">선박명</label>
+        <input type="text" id="name" name="name" class="form-control"
+               placeholder="선박명 검색" value="{{ name }}" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="ship_type">선종</label>
+        <select id="ship_type" name="ship_type" class="form-control">
+          <option value="">전체</option>
+          <option value="CNTR"   {% if ship_type == 'CNTR' %}selected{% endif %}>Container</option>
+          <option value="BULK" {% if ship_type == 'BULK' %}selected{% endif %}>Bulk Carrier</option>
+          <option value="TNKR"      {% if ship_type == 'TNKR' %}selected{% endif %}>Tanker</option>
+          <option value="LPGC"         {% if ship_type == 'LPGC' %}selected{% endif %}>LNG</option>
+          <option value="PCTC"        {% if ship_type == 'PCTC' %}selected{% endif %}>RORO</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="flag">국적</label>
+        <input type="text" id="flag" name="flag" class="form-control"
+               placeholder="국적 검색" value="{{ flag }}" />
+      </div>
+
+      <div class="search-actions">
+        <button type="submit" class="btn btn-primary">검색</button>
+        <a href="{{ url_for('vessel.vessel_list') }}" class="btn btn-outline">초기화</a>
+      </div>
+    </div>
+  </form>
+
+  <!-- 선박 목록 테이블 -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>선박명</th>
+          <th>IMO 번호</th>
+          <th>선종</th>
+          <th class="t-hidden">크기</th>
+          <th class="t-hidden">국적</th>
+          <th class="t-hidden">선급</th>
+          <th class="t-hidden">담당팀</th>
+          <th class="t-hidden" style="text-align:center;">상세</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if vessels %}
+          {% for vessel in vessels %}
+            <tr>
+              <td>
+                <a href="{{ url_for('vessel.vessel_detail', vessel_id=vessel.id) }}">{{ vessel.name }}</a>
+              </td>
+              <td>{{ vessel.imo_number }}</td>
+              <td><span class="badge badge-blue">{{ vessel.ship_type }}</span></td>
+              <td class="t-hidden">{{ vessel.ship_size }}</td>
+              <td class="t-hidden">{{ vessel.flag }}</td>
+              <td class="t-hidden">{{ vessel.detail.vessel_class if vessel.detail else '-' }}</td>
+              <td class="t-hidden">{{ vessel.detail.team if vessel.detail else '-' }}</td>
+              <td class="t-hidden" style="text-align:center;">
+                <a href="{{ url_for('vessel.vessel_detail', vessel_id=vessel.id) }}" class="btn btn-outline btn-sm">상세 보기</a>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="8" class="table-empty">검색 결과가 없습니다.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 페이지네이션 -->
+  {% if pagination.pages > 1 %}
+    <div class="pagination">
+      {% if pagination.has_prev %}
+        <a href="{{ url_for('vessel.vessel_list', name=name, ship_type=ship_type, flag=flag, page=pagination.prev_num) }}">«</a>
+      {% else %}
+        <span class="disabled">«</span>
+      {% endif %}
+
+      {# iter_pages: 생략 구간은 None을 반환 #}
+      {% for page_num in pagination.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+        {% if page_num %}
+          {% if page_num == pagination.page %}
+            <span class="current">{{ page_num }}</span>
+          {% else %}
+            <a href="{{ url_for('vessel.vessel_list', name=name, ship_type=ship_type, flag=flag, page=page_num) }}">{{ page_num }}</a>
+          {% endif %}
+        {% else %}
+          <span class="disabled">…</span>
+        {% endif %}
+      {% endfor %}
+
+      {% if pagination.has_next %}
+        <a href="{{ url_for('vessel.vessel_list', name=name, ship_type=ship_type, flag=flag, page=pagination.next_num) }}">»</a>
+      {% else %}
+        <span class="disabled">»</span>
+      {% endif %}
+    </div>
+  {% endif %}
+
+</div>
 {% endblock %}

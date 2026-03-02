@@ -34,18 +34,19 @@ new_vessel/
 │   └── decorators.py    # 공통 데코레이터 (login_required, admin_required)
 ├── static/
 │   ├── css/
-│   │   ├── common.css        # CSS 리셋 & 공통 스타일
-│   │   ├── index.css
-│   │   ├── signup.css
-│   │   ├── login.css
-│   │   ├── vessel_new.css
-│   │   ├── vessel_list.css
-│   │   ├── vessel_detail.css
-│   │   ├── vessel_edit.css
-│   │   ├── voyage_list.css
-│   │   └── voyage_detail.css
+│   │   ├── common.css        # 공통 스타일 (변수, 리셋, 네비바, 카드, 버튼, 폼, 테이블 등)
+│   │   ├── index.css         # 홈 페이지 (히어로, 빠른 링크 카드)
+│   │   ├── login.css         # 로그인 페이지
+│   │   ├── signup.css        # 회원가입 페이지
+│   │   ├── vessel_list.css   # 선박 목록 페이지
+│   │   ├── vessel_detail.css # 선박 상세 페이지 (2열 레이아웃)
+│   │   ├── vessel_new.css    # 선박 등록 폼
+│   │   ├── vessel_edit.css   # 선박 수정 폼
+│   │   ├── voyage_list.css   # 운항 정보 목록
+│   │   ├── voyage_detail.css # 운항 정보 상세 (카드 그리드, PSC 2열)
+│   │   └── 404_500.css       # 에러 페이지 (404, 500 공용)
 │   └── js/
-│       └── common.js         # 공통 JS (플래시 메시지 자동 숨김 + 애니메이션)
+│       └── common.js         # 공통 JS (플래시 메시지 자동 숨김)
 └── templates/
     ├── base.html
     ├── index.html

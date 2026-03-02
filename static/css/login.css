@@ -1,58 +1,45 @@
-/* ---로그인 UI (start) --- */
+/* ===================================
+   login.html 전용 스타일
+   =================================== */
 
-.title-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* 좌우 정렬에서 상하 정렬로 */
-    flex-direction: column; 
-    gap: 1rem; /* 제목과 부제목 사이의 간격 */
+/* 페이지 상단 여백 */
+.auth-page {
+  padding-top: 3rem;
 }
 
-.sub-container {
-    width: 100%;
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
-    gap: 2rem;
+/* 폼 위 헤더 영역 (아이콘 + 제목 + 부제) */
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
-.form-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    gap: 1rem;
-    margin: 2rem 0rem;
+.auth-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.5rem;
 }
 
-.form-container form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    background-color: white;
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--navy);
 }
 
-.form-container input {
-    padding: 0.8rem 1rem;
-    width: 300px;
-    font-size: 1.1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.auth-subtitle {
+  color: var(--gray-500);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
 }
 
-.form-container input:focus {
-    outline: none;
-    border-color: #3498db;
+/* 카드 하단 안내 문구 */
+.auth-footer {
+  text-align: center;
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--gray-500);
 }
 
-
-/* ---로그인 UI (end) --- */
+.auth-footer a {
+  color: var(--blue);
+  font-weight: 600;
+}

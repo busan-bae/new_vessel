@@ -1,22 +1,59 @@
 {% extends "base.html" %}
 
-{% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+{% block title %}회원가입 - HOS 선박관리{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}" />
 {% endblock %}
 
 {% block content %}
-    <div class="sub-container">
-        <div class="inner">
-            <div class="title-container"><h1>회원 가입</h1></div>
-            <div class="form-container">
-                <form action="/signup" method="POST">
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                    <input type="text" name="username" placeholder="아이디" required minlength="3" maxlength="80">
-                    <input type="password" name="password" placeholder="비밀번호" required minlength="6" maxlength="80">
-                    <input type="password" name="confirm_password" placeholder="비밀번호 확인" required minlength="6" maxlength="80">
-                    <button type="submit" class="btn-primary">가 입</button>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="container-sm auth-page">
+
+  <!-- 상단 헤더 -->
+  <div class="auth-header">
+    <span class="auth-icon">⚓</span>
+    <h1 class="auth-title">회원가입</h1>
+    <p class="auth-subtitle">새 계정을 만들어 시스템을 이용하세요.</p>
+  </div>
+
+  <div class="card">
+    <!-- 회원가입 폼 -->
+    <form method="POST" action="{{ url_for('auth.signup') }}">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}" />
+
+      <div class="form-group">
+        <label class="form-label" for="username">아이디</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          class="form-control"
+          placeholder="사용할 아이디를 입력하세요"
+          required
+          autofocus
+        />
+      </div>
+
+      <div class="form-group" style="margin-bottom:1.5rem;">
+        <label class="form-label" for="password">비밀번호</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          class="form-control"
+          placeholder="비밀번호를 입력하세요"
+          required
+        />
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg">가입하기</button>
+    </form>
+
+    <p class="auth-footer">
+      이미 계정이 있으신가요?
+      <a href="{{ url_for('auth.login') }}">로그인</a>
+    </p>
+  </div>
+
+</div>
 {% endblock %}

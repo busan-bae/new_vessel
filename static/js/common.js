@@ -1,19 +1,17 @@
-setTimeout(function() {
-    let messages = document.querySelectorAll('.flash-message');
-    messages.forEach(function(message) {
-        message.classList.add('flash-hide');           // 퇴장 애니메이션 실행
-        setTimeout(function() {
-            message.style.display = 'none';   // 완전히 사라짐
-        },400)
-    })
-},3000);
+// 플래시 메시지 자동 숨김 처리
+// DOMContentLoaded: HTML이 완전히 로드된 후 실행
+document.addEventListener('DOMContentLoaded', () => {
+  const flashes = document.querySelectorAll('.flash');
 
-const deleteForms = document.querySelector('#delete-form');
-if (deleteForms) {// 삭제 폼이 있는 페이지 에서만 실행
-    deleteForms.addEventListener('submit', function(event) {
-        const confirmed = confirm('정말 삭제하시겠습니까?');
-        if (!confirmed) {
-            event.preventDefault(); // 폼 제출 취소
-        }
-    });
-}
+  flashes.forEach(flash => {
+    // 3초 후 페이드 아웃
+    setTimeout(() => {
+      flash.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+      flash.style.opacity = '0';
+      flash.style.transform = 'translateY(-8px)';
+
+      // 애니메이션 끝난 후 DOM에서 제거
+      setTimeout(() => flash.remove(), 400);
+    }, 3000);
+  });
+});

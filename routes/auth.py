@@ -1,10 +1,14 @@
 from flask import Blueprint, render_template,request,redirect,url_for,session,flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User
+from routes.decorators import login_required, admin_required
+
 
 auth_bp = Blueprint('auth',__name__)
 
 @auth_bp.route("/signup", methods=["GET", "POST"])
+@login_required # 로그인 여부 확인 -> 비 로그인시 로그인 페이지 이동
+@admin_required
 def signup():  
     if request.method == "POST":
         username = request.form.get("username")

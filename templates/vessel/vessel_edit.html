@@ -1,58 +1,106 @@
 {% extends "base.html" %}
 
-{% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/vessel_edit.css') }}">
+{% block title %}{{ vessel.name }} 수정 - HOS 선박관리{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/vessel_edit.css') }}" />
 {% endblock %}
 
-
 {% block content %}
-    <div class="sub-container">
-        <div class="inner">
-            <div class="title-container"><h1>선박 수정</h1></div>
-            <div class="form-container">
-                <form action="/vessel/{{ vessel.id }}/edit" method="POST">
-                    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
-                    <input type="text" name="name" value="{{ vessel.name }}" required>
-                    <input type="number" name="imo_number" value="{{ vessel.imo_number }}" required min="1000000" max="9999999">
-                    <select name="ship_type" required>
-                        <option value="" disabled>선종 선택</option>
-                        <option value="CNTR" {% if vessel.ship_type == "CNTR" %}selected{% endif %}>컨테이너선</option>
-                        <option value="TNKR" {% if vessel.ship_type == "TNKR" %}selected{% endif %}>유조선</option>
-                        <option value="GAS" {% if vessel.ship_type == "GAS" %}selected{% endif %}>가스운반선</option>
-                        <option value="BULK" {% if vessel.ship_type == "BULK" %}selected{% endif %}>벌크선</option>
-                        <option value="PCTC" {% if vessel.ship_type == "PCTC" %}selected{% endif %}>PCTC</option>
-                        <option value="MPV" {% if vessel.ship_type == "MPV" %}selected{% endif %}>MPV</option>
-                    </select>
-                    <input type="text" name="ship_size" value="{{ vessel.ship_size }}" required>
-                    <select name="flag" required>
-                        <option value="" disabled >기국 선택</option>
-                        <option value="KOR" {% if vessel.flag == "KOR" %}selected{% endif %}>대한민국</option>
-                        <option value="PAN" {% if vessel.flag == "PAN" %}selected{% endif %}>파나마</option>
-                        <option value="LIB" {% if vessel.flag == "LIB" %}selected{% endif %}>라이베리아</option>
-                        <option value="MAR" {% if vessel.flag == "MAR" %}selected{% endif %}>마샬</option>
-                        <option value="SIN" {% if vessel.flag == "SIN" %}selected{% endif %}>싱가폴</option>
-                    </select>
-                    <input type="text" name="ship_code" value="{{ vessel.detail.ship_code }}" placeholder="선박코드" required>
-                    <input type="text" name="vessel_ro" value="{{ vessel.detail.vessel_ro }}"  placeholder="RO" required>
-                    <input type="text" name="vessel_class" value="{{ vessel.detail.vessel_class }}" placeholder="선급" required>
-                    <input type="text" name="built_year" value="{{ vessel.detail.built_year}}" placeholder="건조년월(2021-04)">
-                    <select name="team" required>
-                        <option value="" disabled >관리팀 선택</option>
-                        <option value="C1T" {% if vessel.detail.team == "C1T" %}selected{% endif %}>컨테이너선1팀</option>
-                        <option value="C2T" {% if vessel.detail.team == "C2T" %}selected{% endif %}>컨테이너선2팀</option>
-                        <option value="C3T" {% if vessel.detail.team == "C3T" %}selected{% endif %}>컨테이너선3팀</option>
-                        <option value="C4T" {% if vessel.detail.team == "C4T" %}selected{% endif %}>컨테이너선4팀</option>
-                        <option value="TKT" {% if vessel.detail.team == "TKT" %}selected{% endif %}>유조선팀</option>
-                        <option value="LBT" {% if vessel.detail.team == "LBT" %}selected{% endif %}>LNG & BULK선팀</option>
-                    </select>
-                    <select name="crew" required>
-                        <option value="" disabled>해상인사팀 선택</option>
-                        <option value="CM1" {% if vessel.detail.crew == "CM1" %}selected{% endif %}>해상인사1팀</option>
-                        <option value="CM2" {% if vessel.detail.crew == "CM2" %}selected{% endif %}>해상인사2팀</option>
-                    </select>
-                    <button type="submit" class="btn-primary">수 정</button>
-                </form>
-            </div>
-        </div>
+<div class="container form-page">
+
+  <!-- 페이지 헤더 -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">선박 정보 수정</h1>
+      <p class="page-subtitle">{{ vessel.name }}</p>
     </div>
+    <a href="{{ url_for('vessel.vessel_detail', vessel_id=vessel.id) }}" class="btn btn-outline">← 상세로</a>
+  </div>
+
+  <div class="card">
+    <form method="POST" action="{{ url_for('vessel.vessel_edit', vessel_id=vessel.id) }}">
+      <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}" />
+
+      <!-- 기본 정보 섹션 -->
+      <div class="form-section">기본 정보</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="name">선박명 *</label>
+          <input type="text" id="name" name="name" class="form-control"
+                 value="{{ vessel.name }}" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="imo_number">IMO 번호 *</label>
+          <input type="number" id="imo_number" name="imo_number" class="form-control"
+                 value="{{ vessel.imo_number }}" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ship_type">선종 *</label>
+          <select id="ship_type" name="ship_type" class="form-control" required>
+            <option value="Container"    {% if vessel.ship_type == 'Container' %}selected{% endif %}>Container</option>
+            <option value="Bulk Carrier" {% if vessel.ship_type == 'Bulk Carrier' %}selected{% endif %}>Bulk Carrier</option>
+            <option value="Tanker"       {% if vessel.ship_type == 'Tanker' %}selected{% endif %}>Tanker</option>
+            <option value="LNG"          {% if vessel.ship_type == 'LNG' %}selected{% endif %}>LNG</option>
+            <option value="RORO"         {% if vessel.ship_type == 'RORO' %}selected{% endif %}>RORO</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="ship_size">선박 크기 *</label>
+          <input type="text" id="ship_size" name="ship_size" class="form-control"
+                 value="{{ vessel.ship_size }}" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="flag">국적 *</label>
+          <input type="text" id="flag" name="flag" class="form-control"
+                 value="{{ vessel.flag }}" required />
+        </div>
+      </div>
+
+      <!-- 상세 정보 섹션 -->
+      {% if vessel.detail %}
+      <div class="form-section">상세 정보</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label" for="ship_code">선박 코드 *</label>
+          <input type="text" id="ship_code" name="ship_code" class="form-control"
+                 value="{{ vessel.detail.ship_code }}" maxlength="6" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="vessel_ro">선박 구분 *</label>
+          <input type="text" id="vessel_ro" name="vessel_ro" class="form-control"
+                 value="{{ vessel.detail.vessel_ro }}" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="vessel_class">선급 *</label>
+          <input type="text" id="vessel_class" name="vessel_class" class="form-control"
+                 value="{{ vessel.detail.vessel_class }}" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="built_year">건조 연도</label>
+          <input type="text" id="built_year" name="built_year" class="form-control"
+                 value="{{ vessel.detail.built_year or '' }}" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="team">담당팀 *</label>
+          <input type="text" id="team" name="team" class="form-control"
+                 value="{{ vessel.detail.team }}" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="crew">선원 정보 *</label>
+          <input type="text" id="crew" name="crew" class="form-control"
+                 value="{{ vessel.detail.crew }}" required />
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- 취소 / 저장 버튼 -->
+      <div class="form-actions">
+        <a href="{{ url_for('vessel.vessel_detail', vessel_id=vessel.id) }}" class="btn btn-outline">취소</a>
+        <button type="submit" class="btn btn-primary">저장하기</button>
+      </div>
+    </form>
+  </div>
+
+</div>
 {% endblock %}

@@ -1,72 +1,137 @@
 {% extends "base.html" %}
 
-{% block css %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/voyage_list.css') }}">
+{% block title %}운항 정보 - HOS 선박관리{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/voyage_list.css') }}" />
 {% endblock %}
 
 {% block content %}
-    <div class="vessel-list-container">
-        <div class="inner">
-            <div class="title-container"><h1>운항정보</h1></div>
-            <div class="search-box">
-                <form method="GET" action="{{ url_for('vessel.voyage_list') }}">
-                    <div class="search-box-inner">
-                        <input type="hidden" name="page" value="1"> 
-                        <input type="text" name="vessel_name" placeholder="선박명" value="{{ vessel_name }}">
-                        <input type="text" name="line" placeholder="항로" value="{{ line }}">
-                        <input type="text" name="s_crew" placeholder="선기장" value="{{ s_crew }}">
-                        <input type="text" name="supervisor" placeholder="감독" value="{{ supervisor }}">                      
-                    </div>
-                    <button type="submit" class="btn-primary">검색</button>
-                </form>
-            </div>
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>선박명</th>
-                            <th>운항라인</th>
-                            <th>선장</th>
-                            <th>기관장</th>
-                            <th>담당감독</th>
-                            <th>운항감독</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for voyage in voyages %}
-                        <tr>
-                            <td><a href="{{ url_for('vessel.voyage_detail', voyage_id=voyage.id)}}">{{ voyage.vessel_name}}</a></td>
-                            <td>{{ voyage.line }}</td>
-                            <td>{{ voyage.captain }}</td>
-                            <td>{{ voyage.chief_engineer }}</td>
-                            <td>{{ voyage.safety_supervisor }}</td>
-                            <td>{{ voyage.ops_supervisor }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <div class="pagination">
-                {% if pagination.has_prev %}
-                    <a href="{{ url_for('vessel.voyage_list', page=pagination.prev_num, vessel_name=vessel_name, s_crew=s_crew,
-                           line=line, supervisor=supervisor,) }}">이전</a>
-                {% endif %}
+<div class="container">
 
-                {% for p in pagination.iter_pages() %}
-                    {% if p %}
-                        <a href="{{ url_for('vessel.voyage_list', page = p, vessel_name=vessel_name, s_crew=s_crew,
-                           line=line, supervisor=supervisor,) }}" 
-                        {% if p == pagination.page %} class="active" {% endif %}>{{ p }}</a>
-                    {% else %}
-                        <span>...</span>
-                    {% endif %}
-                {% endfor %}
+  <!-- 페이지 헤더 -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">운항 정보</h1>
+      <p class="page-subtitle">총 {{ pagination.total }}건</p>
+    </div>
+  </div>
 
-                {% if pagination.has_next %}
-                    <a href="{{ url_for('vessel.voyage_list', page=pagination.next_num, vessel_name=vessel_name, s_crew=s_crew,
-                           line=line, supervisor=supervisor,) }}">다음</a>
+  <!-- 검색 바 (GET 방식) -->
+  <form method="GET" action="{{ url_for('vessel.voyage_list') }}">
+    <div class="search-bar">
+      <div class="form-group">
+        <label class="form-label" for="vessel_name">선박명</label>
+        <input type="text" id="vessel_name" name="vessel_name" class="form-control"
+               placeholder="선박명 검색" value="{{ vessel_name }}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="line">항로</label>
+        <input type="text" id="line" name="line" class="form-control"
+               placeholder="항로 검색" value="{{ line }}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="supervisor">감독</label>
+        <input type="text" id="supervisor" name="supervisor" class="form-control"
+               placeholder="안전/운항 감독 검색" value="{{ supervisor }}" />
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="s_crew">선원</label>
+        <input type="text" id="s_crew" name="s_crew" class="form-control"
+               placeholder="선장/기관장 검색" value="{{ s_crew }}" />
+      </div>
+      <div class="search-actions">
+        <button type="submit" class="btn btn-primary">검색</button>
+        <a href="{{ url_for('vessel.voyage_list') }}" class="btn btn-outline">초기화</a>
+      </div>
+    </div>
+  </form>
+
+  <!-- 운항 정보 테이블 -->
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>선박명</th>
+          <th>항로</th>
+          <th class="t-hidden">항차</th>
+          <th class="t-hidden">TEU</th>
+          <th class="t-hidden">선장</th>
+          <th class="t-hidden">기관장</th>
+          <th class="t-hidden">안전감독</th>
+          <th class="t-hidden">운항감독</th>
+          <th>다음 입항</th>
+          <th style="text-align:center;">상세</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if voyages %}
+          {% for v in voyages %}
+            <tr>
+              <td>
+                <a href="{{ url_for('vessel.voyage_detail', voyage_id=v.id) }}">{{ v.vessel_name }}</a>
+              </td>
+              <td>
+                {% if v.line %}
+                  <span class="badge badge-blue">{{ v.line }}</span>
+                {% else %}
+                  <span class="badge badge-gray">-</span>
                 {% endif %}
-                </div> 
-            </div>
-        </div>
-    </div> 
+              </td>
+              <td  class="t-hidden">{{ v.voy_no or '-' }}</td>
+              <td  class="t-hidden">{{ v.teu or '-' }}</td>
+              <td  class="t-hidden">{{ v.captain or '-' }}</td>
+              <td  class="t-hidden">{{ v.chief_engineer or '-' }}</td>
+              <td  class="t-hidden">{{ v.safety_supervisor or '-' }}</td>
+              <td  class="t-hidden">{{ v.ops_supervisor or '-' }}</td>
+              <td class="port-cell">
+                {{ v.next_port or '-' }}
+                {% if v.next_eta %}
+                  <small>ETA {{ v.next_eta }}</small>
+                {% endif %}
+              </td>
+              <td style="text-align:center;">
+                <a href="{{ url_for('vessel.voyage_detail', voyage_id=v.id) }}" class="btn btn-outline btn-sm">상세</a>
+              </td>
+            </tr>
+          {% endfor %}
+        {% else %}
+          <tr>
+            <td colspan="10" class="table-empty">검색 결과가 없습니다.</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 페이지네이션 -->
+  {% if pagination.pages > 1 %}
+    <div class="pagination">
+      {% if pagination.has_prev %}
+        <a href="{{ url_for('vessel.voyage_list', vessel_name=vessel_name, line=line, supervisor=supervisor, s_crew=s_crew, page=pagination.prev_num) }}">«</a>
+      {% else %}
+        <span class="disabled">«</span>
+      {% endif %}
+
+      {% for page_num in pagination.iter_pages(left_edge=2, right_edge=2, left_current=2, right_current=2) %}
+        {% if page_num %}
+          {% if page_num == pagination.page %}
+            <span class="current">{{ page_num }}</span>
+          {% else %}
+            <a href="{{ url_for('vessel.voyage_list', vessel_name=vessel_name, line=line, supervisor=supervisor, s_crew=s_crew, page=page_num) }}">{{ page_num }}</a>
+          {% endif %}
+        {% else %}
+          <span class="disabled">…</span>
+        {% endif %}
+      {% endfor %}
+
+      {% if pagination.has_next %}
+        <a href="{{ url_for('vessel.voyage_list', vessel_name=vessel_name, line=line, supervisor=supervisor, s_crew=s_crew, page=pagination.next_num) }}">»</a>
+      {% else %}
+        <span class="disabled">»</span>
+      {% endif %}
+    </div>
+  {% endif %}
+
+</div>
 {% endblock %}

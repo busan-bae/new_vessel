@@ -1,84 +1,49 @@
-.vessel-detail-container {
-    width: 100%;
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #fff;
+/* ===================================
+   voyage_detail.html 전용 스타일
+   =================================== */
+
+/* 상단 카드 2열 행 (기본정보 | 선원&감독, 최근출항 | 다음입항) */
+.voyage-card-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
 }
 
-.dl-container {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin: 3rem 0rem;
-    padding : 2rem 0rem; 
-    background-color: white ;
-    color: black;
-    border-radius: 10px;
+/* PSC 검사 카드 내부 2열 (1차 | 2차) */
+.psc-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
 }
 
-.btn-position {   
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
+/* PSC 섹션 소제목 */
+.psc-sub-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--gray-400);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 0.5rem;
 }
 
-/* .btn-position a {   
-    text-align: center;
-} */
-
-
-.title-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* 좌우 정렬에서 상하 정렬로 */
-    flex-direction: column; 
-    gap: 1rem; /* 제목과 부제목 사이의 간격 */
+/* 항로 텍스트 */
+.voyage-itinerary {
+  font-size: 0.9rem;
+  color: var(--gray-700);
+  line-height: 1.8;
 }
 
-dl {
-    display: grid;
-    grid-template-columns: 1fr 2fr; /* 항목명과 항목값의 비율 */
-    gap: 0.5rem 1rem; /* 항목 간의 간격 */
-    width: 90%;
-    text-align: left;
-    font-size: 1.3rem;
+/* 마지막 업데이트 시각 */
+.voyage-updated {
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--gray-400);
+  margin-top: 0.5rem;
 }
 
-dt, dd {
-      padding: 0.7rem 0.6rem;
-      border-bottom: 1px solid #eee; /* 행 구분선 */
-}
-
-dt { /* 항목명 */
-    font-weight: bold;
-    color: #666;        /* 항목명은 회색 */
-    font-size: 0.9rem;  /* 항목명은 살짝 작게 */
-}
-
-dd { /* 항목값 */ 
-    margin-left: 0;
-    font-weight: 600;   /* 항목값은 굵게 */
-    color: #333;
-}
-
+/* 반응형: 모바일에서 1열 전환 */
 @media (max-width: 768px) {
-    .vessel-detail-container {
-    padding: 2rem 0rem;
-    }
-
-
-    dl {
-        font-size: 1rem;
-    }
-    
-
-    dt {
-        font-size: 0.8rem;
-    }
+  .voyage-card-row { grid-template-columns: 1fr; }
+  .psc-two-col     { grid-template-columns: 1fr; }
 }

@@ -1,46 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>선박운항정보</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css')}}">
-    {% block css %}
-    {% endblock %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}HOS 선박관리{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}" />
+  {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <header>
-        <div class="inner">
-            <div class="head-container">
-                <div class="head-brand"><a href="{{ url_for('main.home') }}">HOS정보</a></div>
-                <div class="head-menu">
-                    <div><a href="{{ url_for('vessel.vessel_list') }}">선박정보</a></div>
-                    <div><a href="{{ url_for('vessel.voyage_list') }}">운항정보</a></div>
-                    {% if current_user and current_user.role  == "admin" %}
-                        <div><a href="{{ url_for('vessel.vessel_new') }}">선박등록</a></div>
-                    {% endif %}
-                    {% if session.get('user_id')%}
-                        <div><a href="{{ url_for('auth.logout') }}">로그아웃</a></div>
-                    {% else %}
-                        <div><a href="{{ url_for('auth.login') }}">로그인</a></div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-    </header>
-    <main>
-        <!-- flash messages -->
-        {% with messages = get_flashed_messages(with_categories=True) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash-message flash-{{ category }}">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-        <!-- block -->
-        {% block content %}
-        {% endblock %}
-    </main>
-    <script src="{{ url_for('static', filename='js/common.js')}}"></script>
+
+  <!-- ===== 네비게이션 바 ===== -->
+  <nav class="navbar">
+    <a href="{{ url_for('main.home') }}" class="navbar-brand">
+      ⚓ HOS 선박관리
+    </a>
+
+    <ul class="navbar-nav">
+      {% if current_user %}
+        {# 로그인 상태: 주요 메뉴 표시 #}
+        <li><a href="{{ url_for('vessel.vessel_list') }}" class="nav-link">선박 목록</a></li>
+        <li><a href="{{ url_for('vessel.voyage_list') }}" class="nav-link">운항 정보</a></li>
+        {% if current_user.role == 'admin' %}
+          <li><a href="{{ url_for('vessel.vessel_new') }}" class="nav-link">선박 등록</a></li>
+        {% endif %}
+        <li><div class="nav-divider"></div></li>
+        <li class="nav-user">{{ current_user.username }}</li>
+        <li><a href="{{ url_for('auth.logout') }}" class="nav-link">로그아웃</a></li>
+      {% else %}
+        {# 비로그인 상태: 로그인/회원가입 링크 #}
+        <li><a href="{{ url_for('auth.login') }}" class="nav-link">로그인</a></li>
+      {% endif %}
+      {% if current_user.role == 'admin' %}
+        <li><a href="{{ url_for('auth.signup') }}" class="nav-link">회원등록</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  <!-- ===== 플래시 메시지 ===== -->
+  {# with_categories=True: (카테고리, 메시지) 형태로 가져옴 #}
+  {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+      <div class="flash-container">
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- ===== 메인 콘텐츠 영역 ===== -->
+  {% block content %}{% endblock %}
+
+  <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+  {% block extra_js %}{% endblock %}
 </body>
 </html>

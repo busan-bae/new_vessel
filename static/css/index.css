@@ -1,78 +1,135 @@
-/* -------------Main (start)----------------------- */
+/* ===================================
+   index.html 전용 스타일
+   =================================== */
 
-
-.main-container {
-    width : 100%;
-    height: 30vh;
-    color : #fff;
+/* 히어로 배너 섹션 */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: #fff;
+  padding: 4rem 2rem;
+  text-align: center;
+  border-radius: var(--radius-lg);
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.title-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* 좌우 정렬에서 상하 정렬로 */
-    flex-direction: column; 
-    gap: 1rem; /* 제목과 부제목 사이의 간격 */
+/* 배경 서클 장식 */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
+  pointer-events: none;
 }
 
-/* -------------Main (end)----------------------- */
-
-/* -------------card (start)----------------------- */
-.card-section {
-    width : 100%;
-    padding: 4rem 0; /* 상하 여백 추가 */
+.hero-icon {
+  font-size: 3.5rem;
+  display: block;
+  margin-bottom: 1rem;
 }
 
-.card-container {
-    width: 100%;
-    padding: 2rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap : 2rem; /* 카드 사이의 간격 */
+.hero-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.5px;
 }
 
-.card {
-    width: 200px;
-    height: 150px;
-    background-color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s;
+.hero-subtitle {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.72);
+  margin-bottom: 2rem;
 }
 
-.card:hover {
-    background-color: #3498db;
-    color: #fff;
-    cursor: pointer;
-    transform: translateY(-8px);
+/* 버튼 그룹 (히어로 내부) */
+.hero-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-/* -------------card (end)----------------------- */
+/* 히어로 내부 흰 테두리 버튼 */
+.btn-hero-outline {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
 
+.btn-hero-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  text-decoration: none;
+}
 
+/* ---- 빠른 링크 카드 그리드 ---- */
+.quick-links {
+  display: grid;
+  /* auto-fit: 남은 공간에 맞게 열 개수 자동 조정 */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
 
-/* -------------미디어 쿼리 (start)----------------------- */
+.quick-link-card {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  text-decoration: none;
+  color: var(--gray-700);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition);
+}
 
+.quick-link-card:hover {
+  border-color: var(--blue);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  color: var(--gray-800);
+  text-decoration: none;
+}
+
+.quick-link-icon {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 0.75rem;
+}
+
+.quick-link-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 0.3rem;
+}
+
+.quick-link-desc {
+  font-size: 0.8rem;
+  color: var(--gray-500);
+}
+
+/* ---- 비로그인 안내 카드 ---- */
+.home-guest {
+  text-align: center;
+  padding: 3rem;
+}
+
+.home-guest-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.home-guest p {
+  color: var(--gray-600);
+  margin-bottom: 1.5rem;
+}
+
+/* 반응형 */
 @media (max-width: 768px) {
-    .card-section {
-        padding: 1rem 0; /* 작은 화면에서는 상하 여백 줄이기 */
-    }
-
-    .card-container {
-        flex-direction: column; /* 작은 화면에서는 카드 세로 정렬 */
-        gap: 2rem; /* 카드 사이의 간격 줄이기 */
-    }
-
-    .card {
-        height: 70px;
-    }
-
+  .hero         { padding: 2.5rem 1rem; }
+  .hero-title   { font-size: 1.6rem; }
 }
